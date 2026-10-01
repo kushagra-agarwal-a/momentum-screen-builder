@@ -6,14 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/native-select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -152,85 +146,47 @@ export function ScreenBuilder() {
               <TabsContent value="core" className="mt-4 space-y-4">
                 <div className="space-y-2">
                   <Label>Index universe</Label>
-                  <Select value={cfg.index} onValueChange={(v) => v && patch({ index: v })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {INDEX_OPTIONS.map((o) => (
-                        <SelectItem key={o.value} value={o.value}>
-                          {o.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <NativeSelect
+                    value={cfg.index}
+                    onChange={(v) => patch({ index: v })}
+                    options={INDEX_OPTIONS}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Sort by</Label>
-                  <Select value={cfg.sort_by} onValueChange={(v) => v && patch({ sort_by: v })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-72">
-                      {SORT_OPTIONS.map((o) => (
-                        <SelectItem key={o.value} value={o.value}>
-                          {o.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <NativeSelect
+                    value={cfg.sort_by}
+                    onChange={(v) => patch({ sort_by: v })}
+                    options={SORT_OPTIONS}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Sort direction</Label>
-                  <Select
+                  <NativeSelect
                     value={cfg.sort_direction}
-                    onValueChange={(v) => patch({ sort_direction: v as "desc" | "asc" })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="desc">Highest to Lowest</SelectItem>
-                      <SelectItem value="asc">Lowest to Highest</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    onChange={(v) => patch({ sort_direction: v as "desc" | "asc" })}
+                    options={[
+                      { value: "desc", label: "Highest to Lowest" },
+                      { value: "asc", label: "Lowest to Highest" },
+                    ]}
+                  />
                 </div>
                 <Separator />
                 <div className="space-y-2">
                   <Label>Sort by (secondary)</Label>
-                  <Select
+                  <NativeSelect
                     value={cfg.sort_by_two}
-                    onValueChange={(v) => v && patch({ sort_by_two: v })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-72">
-                      {SORT_WITH_NONE.map((o) => (
-                        <SelectItem key={o.value} value={o.value}>
-                          {o.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={(v) => patch({ sort_by_two: v })}
+                    options={SORT_WITH_NONE}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Sort by (tertiary)</Label>
-                  <Select
+                  <NativeSelect
                     value={cfg.sort_by_three}
-                    onValueChange={(v) => v && patch({ sort_by_three: v })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-72">
-                      {SORT_WITH_NONE.map((o) => (
-                        <SelectItem key={o.value} value={o.value}>
-                          {o.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    onChange={(v) => patch({ sort_by_three: v })}
+                    options={SORT_WITH_NONE}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Result limit</Label>
@@ -296,20 +252,14 @@ export function ScreenBuilder() {
                 </div>
                 <div className="space-y-2">
                   <Label>Min 1Y return vs repo</Label>
-                  <Select
+                  <NativeSelect
                     value={cfg.minimum_return_one_year}
-                    onValueChange={(v) =>
-                      patch({ minimum_return_one_year: v as "none" | "repo" })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">No minimum</SelectItem>
-                      <SelectItem value="repo">Above repo (~6.5%)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    onChange={(v) => patch({ minimum_return_one_year: v as "none" | "repo" })}
+                    options={[
+                      { value: "none", label: "No minimum" },
+                      { value: "repo", label: "Above repo (~6.5%)" },
+                    ]}
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <Label htmlFor="retvol">1Y return &gt; volatility</Label>
@@ -361,18 +311,14 @@ export function ScreenBuilder() {
                 </div>
                 <div className="space-y-2">
                   <Label>Apply filters on</Label>
-                  <Select
+                  <NativeSelect
                     value={cfg.apply_filters_on}
-                    onValueChange={(v) => patch({ apply_filters_on: v as "all" | "ranked" })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All stocks (pre-rank)</SelectItem>
-                      <SelectItem value="ranked">Ranked list only</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    onChange={(v) => patch({ apply_filters_on: v as "all" | "ranked" })}
+                    options={[
+                      { value: "all", label: "All stocks (pre-rank)" },
+                      { value: "ranked", label: "Ranked list only" },
+                    ]}
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <Label htmlFor="beta">Ignore top 10% beta</Label>
