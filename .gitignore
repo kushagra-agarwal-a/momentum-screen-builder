@@ -22,6 +22,8 @@
 
 # local price cache
 /data/
+__pycache__/
+agent-tools/
 
 # misc
 .DS_Store
