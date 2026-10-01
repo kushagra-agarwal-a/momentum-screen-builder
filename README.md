@@ -28,7 +28,7 @@ First screen run **syncs ~280 trading days** of bhavcopy into `data/prices.sqlit
 
 Linked to this repo on Cursor Origin; pushes to `main` redeploy automatically. Anonymous CLI “temporary” URLs often return **403** for visitors outside the agent session—use the production link above instead.
 
-On Vercel, the serverless engine uses a shorter bhavcopy lookback (~90 days) so long-horizon sorts (e.g. 12-month Sharpe) may show empty values until history is extended or cached.
+On Vercel, the API syncs enough trading days for your chosen sort (e.g. ~267 days for 1Y Sharpe). The results panel shows **Synced X / Y days bhavcopy**; if X is much smaller than Y or Primary factor is blank, hard-refresh and run again.
 
 ## CLI (optional)
 

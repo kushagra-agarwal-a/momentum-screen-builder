@@ -380,7 +380,16 @@ export function ScreenBuilder() {
                   <Badge variant="outline">With data {result.evaluated}</Badge>
                 )}
                 {result.sync?.fetched_days != null && result.sync.fetched_days > 0 && (
-                  <Badge variant="outline">Synced {result.sync.fetched_days} days</Badge>
+                  <Badge variant="outline">
+                    Synced {result.sync.fetched_days}
+                    {result.sync.lookback_requested != null
+                      ? ` / ${result.sync.lookback_requested} days`
+                      : ""}{" "}
+                    bhavcopy
+                  </Badge>
+                )}
+                {result.ranked_with_primary != null && (
+                  <Badge variant="outline">{result.ranked_with_primary} with sort value</Badge>
                 )}
               </div>
             )}
