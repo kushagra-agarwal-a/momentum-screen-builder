@@ -22,6 +22,14 @@ pip install -r requirements.txt
 
 First screen run **syncs ~280 trading days** of bhavcopy into `data/prices.sqlite` (can take several minutes). Later runs are incremental.
 
+## Live demo (Vercel)
+
+**Production:** [https://momentum-screen-builder-app.vercel.app](https://momentum-screen-builder-app.vercel.app)
+
+Linked to this repo on Cursor Origin; pushes to `main` redeploy automatically. Anonymous CLI “temporary” URLs often return **403** for visitors outside the agent session—use the production link above instead.
+
+On Vercel, the serverless engine uses a shorter bhavcopy lookback (~90 days) so long-horizon sorts (e.g. 12-month Sharpe) may show empty values until history is extended or cached.
+
 ## CLI (optional)
 
 ```bash
