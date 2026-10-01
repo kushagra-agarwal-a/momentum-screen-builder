@@ -92,7 +92,7 @@ export async function loadPriceHistory(
   let fetched = 0;
   let asOf: string | null = null;
 
-  const batchSize = 6;
+  const batchSize = 12;
   for (let i = 0; i < days.length; i += batchSize) {
     const chunk = days.slice(i, i + batchSize);
     const maps = await Promise.all(chunk.map((d) => fetchDay(d)));

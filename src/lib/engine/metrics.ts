@@ -212,4 +212,26 @@ export function computeSortMetric(
   return map[key]?.() ?? null;
 }
 
-export { W_12M, W_6M, W_3M, W_1M };
+export { W_12M, W_6M, W_3M, W_1M, W_9M };
+
+/** Minimum daily bars needed to compute this sort key (trading days). */
+export function minTradingDaysForSortKey(key: string): number {
+  if (key === "none" || key === "price_to_earnings" || key === "marketcap") return 0;
+  if (key === "close" || key === "close_raw") return 1;
+  if (key === "away_from_high_all_time") return 5;
+  if (
+    key.includes("1_year") ||
+    key.includes("12_") ||
+    key === "volatility_1_year" ||
+    key === "return_12_minus_1_months" ||
+    key === "return_12_minus_two_months" ||
+    key === "beta"
+  ) {
+    return W_12M;
+  }
+  if (key.includes("9_months")) return W_9M;
+  if (key.includes("6_months")) return W_6M;
+  if (key.includes("3_months")) return W_3M;
+  if (key.includes("1_months")) return W_1M;
+  return W_3M;
+}

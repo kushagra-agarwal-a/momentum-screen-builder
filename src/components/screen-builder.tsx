@@ -36,11 +36,13 @@ type Row = {
 
 type ScreenResult = {
   error?: string;
+  warning?: string;
   index_label?: string;
   as_of?: string;
   universe_count?: number;
   evaluated?: number;
-  sync?: { fetched_days?: number; errors?: string[] };
+  ranked_with_primary?: number;
+  sync?: { fetched_days?: number; lookback_requested?: number; errors?: string[] };
   rows?: Row[];
 };
 
@@ -361,6 +363,11 @@ export function ScreenBuilder() {
             {result?.error && (
               <p className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
                 {result.error}
+              </p>
+            )}
+            {result?.warning && !result.error && (
+              <p className="mb-4 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-950 dark:text-amber-100">
+                {result.warning}
               </p>
             )}
             {result && !result.error && (
