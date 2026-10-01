@@ -1,0 +1,755 @@
+# Search Messages
+
+Search
+
+From Date
+
+To Date
+
+ChannelAll Channels #announcement #books #chart-analysis #financial\_planning #fixed-income #fund-letters #futures-options #general #global-markets #health #leisure #maths #momentum #mutualfund #news #python-project #research\_reports #systems\_investing #tech #travel #value-investing
+
+From User
+
+Sort ByDateRelevanceReply Count
+
+DirectionNewest FirstOldest First
+
+Search
+
+142 results for "Sharpe 12 6 3" 
+
+Apeksha
+
+Apeksha19 Jul 2026, 1:57 PM #momentum
+
+@AjayT this .. I am still toying around with weights and what to include in composite scores. I also look at sharpe of various periods plus ranks excluding 52wk .  
+  
+overall I have realised, the scoring and ranking method whether on its own or composite with diff weights doesnt matter a lot, the top 50-75 stocks remain the same for same timeperiods.  
+  
+what does matter more is the lookback period- whether 12months or 6 months or 3 months or combination .. the longer timeframe is much slower and the stocks that comes in top ranks in longer TF may already have seen phenomenal momentum in last 1-6 months. and again they will be slower to exit based on WRH so you may lose a lot of open profits before they go out of WRH. But then again it will protect from whipsaws. So you have to decide what you prefer.
+
+ View thread — replying to AjayT
+
+👍1
+
+MaheshG
+
+MaheshG22 Apr 2026, 3:32 PM #momentum
+
+Perplexity answer  
+  
+Vedanta Limited’ demerger is a major structural move that is likely to unlock value over the long term, but the stock is currently richly valued and carries significant risk; for a quality‑long‑term investor it may still be interesting only on dips or via staggered buying, not as a panic buy at current levels.  
+Below is a concise, fund‑oriented analysis you can use for your decision‑making.  
+  
+What the demerger does  
+• Vedanta will split into five listed entities: Vedanta Ltd (base metals: zinc, copper, etc.), Vedanta Aluminium, Vedanta Oil & Gas, Vedanta Power, and Vedanta Steel & Ferrous Materials.  
+• Shareholders as of May 1, 2026 will get 1:1 shares in each new entity for every Vedanta share held, with no cash adjustment.  
+• The stated objective is to unlock hidden value, improve focus, and allow each business to trade at sector‑appropriate multiples.  
+Recent stock performance and valuation  
+• Vedanta has already priced in a lot of the upside:  
+Delivered about 227% return over \~31 months till April 2026.  
+The stock is trading near all‑time highs (around ₹790–₹800 on April 20, 2026), reflecting strong sentiment around the demerger.  
+• Independent valuation providers classify Vedanta as overvalued today: estimates of intrinsic value place the stock above its fair value, implying limited margin of safety for new lump‑sum buyers.  
+  
+Business quality and risks  
+• Strengths:  
+Strong franchise in base metals, aluminium, and oil & gas with globally relevant scale.  
+Historically delivered high ROE (\~20%+ over last 3 years) and strong earnings growth, which supports the “value unlock” thesis post‑demerger.  
+• Risks and concerns:  
+High debt and substantial promoter pledging remain a structural risk; any downgrade in metal / commodity prices or financing stress can amplify downside.  
+Regulatory and environmental risks (mining, power, etc.) are non‑trivial and can hit margins or execution.  
+  
+Is it worth investing now?  
+For an investor with your profile (technical, long‑term, value‑oriented), here’s how to frame it:  
+• Bull case (if you are comfortable with cyclical risk):  
+Demerger can re‑rate the individual businesses, especially Aluminium, Oil & Gas, and Power, where some analysts see upside of tens of rupees per share versus the current bundled price.  
+If you hold through the split, you end up with stakes in five separate entities, which gives you more flexibility to retain or trim each business based on fundamentals later.  
+• Bear / caution case:  
+The stock is already expensive on most valuation models; further upside is priced in, so fresh entry now has limited margin of safety.  
+If metal/commodity prices turn down or debt/ regulatory issues flare, the stock can correct sharply even after the demerger.  
+  
+Practical recommendation for you  
+• If you already hold Vedanta:  
+Consider holding through the demerger to receive the new scrips; then review each business separately (e.g., keep the higher‑quality, lower‑debt segments and exit weaker ones).  
+• If you are new to the stock:  
+• Avoid aggressive lump‑sum entry at current all‑time highs.  
+• Better approach:  
+Decide a target entry band (e.g., 20–25% below current price if you want a margin of safety), or  
+Use SIP‑style staggered buying (e.g., monthly tranches) over 6–12 months to average in.  
+If you share your time horizon (pure long‑term vs 3–5 years) and risk tolerance, I can outline a concrete buy‑zone, target price band, and how to size your position in Vedanta versus other metal/infra stocks.
+
+ View thread — replying to Abhinav Mehrotra
+
+Spiderman
+
+Spiderman04 Mar 2026, 12:55 PM #research\_reports
+
+US–Iran Escalation:  
+\* Sharp US–Israel strikes on Iran (nuclear & military targets) followed by Iranian retaliation have escalated into the most serious Middle East confrontation in decades.  
+\* Markets are focused on potential disruption in the Strait of Hormuz — the world’s key energy chokepoint.  
+  
+Why Strait of Hormuz Matters:  
+\* \~20% of global oil flows & \~25% of global LNG trade pass through it  
+\* Qatar alone moves \~25% of global LNG via Hormuz  
+\* Any sustained disruption would lead to oil & gas price spikes, higher freight & insurance costs  
+\* Single biggest tail risk for inflation & global markets  
+  
+Energy Market Scenarios:  
+\* Base Case → Brent \~$75-85/bbl (manageable risk premium)  
+\* Bear Case → $100/bbl (sustained)  
+\* Bull Case → fall back to $70/bbl (No structural supply issue)  
+  
+Global Market Impact:  
+\* First wave is mechanical risk-off (Oil, Gold, USD are up, Equities down)  
+\* Energy, shipping, and defence outperform  
+\* Refiners & fuel-sensitive sectors under pressure  
+\* Fed likely to hold; sustained $90+ oil delays rate cuts  
+\* Systemic risk only if physical supply disruption persists for a long time  
+  
+China – Strategic Stress Point:  
+\* \~13% of China’s crude imports from Iran  
+\* Discounted oil + RMB settlement critical to China’s strategy  
+\* Faces dilemma: support Iran (sanction risk) vs stay cautious (credibility loss)  
+\* Energy vulnerability + diplomatic pressure rising  
+  
+India – Exposure Matrix:  
+\* 85% crude import dependent  
+\* 50% of crude & \~54% LNG flows linked to Hormuz routes  
+\* 75-80 oil is manageable for CAD & inflation  
+\* Sustained $90–100 oil would lead to CPI pressure, CAD widening, and INR vulnerability  
+\* RBI likely to intervene if volatility spikes,  
+\* Remittance risk  
+  
+Market Behaviour and Historical Context  
+\* Historical conflicts: avg \~10% drawdown, recovery \~1–2 months  
+\* Current base case: volatility event, not structural crisis  
+\* Tail risk: prolonged oil shock  
+  
+Takeaway  
+\* The duration of the conflict, the oil shock, would determine macroeconomic damage, with a low probability of being sustained for long  
+\* The next 1-2 weeks are critical in determining whether markets normalize or shift to a high-oil, high-risk regime  
+  
+Neo Wealth’s View on Indian Equity Markets:  
+\* We assign a high probability to the Nifty 50 index delivering 14% p.a. returns over a period of 3 yrs from the current level.  
+\* Sensex’s Intrinsic value for Sep’27 is about 1,00,000\. Maintaining a neutral to marginal overweight stance as of now  
+\* However, a 5-10% decline at the index level without a change in fundamentals will enable us to change our stance to Overweight.  
+  
+Macro stability :  
+\* Steady GDP growth (6.5–7%), low inflation (4% in FY27), and low interest rates (Repo @ 5.25%)  
+  
+Supportive monetary and fiscal measures:  
+  
+Fiscal measures for consumption:  
+\* GST rate cut (₹1.8 lakh crore)  
+\* Income tax slab rationalisation (\~₹1 lakh crore), 8th Pay Commission (\~5 lakh crore, to be implemented in 2027, coinciding with UP elections; arrears to be paid from 1st Jan ’26)  
+  
+Fiscal measures for investment:  
+\* Fiscally prudent Budget 2026 (fiscal deficit at 4.3% in FY27)  
+\* Continued focus on capex (₹12.2 lakh crore)  
+\* Renewed focus on manufacturing localisation (EMS @ ₹40k crore, biopharma, chemicals, etc.  
+  
+Monetary measures:  
+\* Assuming household debt to GDP of 45% and 80–90% transmission of a 125 bps rate cut  
+\* The net stimulus will be about ₹1 lakh crore  
+\* Double-digit earnings growth: 13-15% in FY27  
+  
+Favourable base (poor earnings growth over the last 2 years)  
+\* Low interest rates, supportive trade deals, and strong monetary and fiscal measures.  
+\* Banks, healthcare, industrials, telecom, and consumption sectors will drive EPS growth in FY27  
+  
+Valuations: fairly priced market  
+\* Due to price and time correction (1–1.5 years), large-cap stocks are attractively priced, and mid and small-cap indices are largely fairly priced.  
+\* Nifty 50 P/E below 20x is relatively attractively priced compared to historical averages, after considering low interest rates and changes in index composition in favour of high-quality, high-growth companies over the last 2–3 years (e.g., Zomato, HDFC Life)  
+  
+Neo House View and Guidance  
+  
+\* Indian equity markets (Neutral to marginal overweight):  
+\* Maintain policy allocation. Advise lump-sum investments in Large and Flexi-cap Portfolio vs stagger mid and small-cap allocation over 3\-6 months.  
+\* Recently changed our stance on mid and small cap to Neutral. And continue to maintain a positive outlook on GARP/Quality Portfolios
+
+ View thread — replying to Spiderman
+
+Spiderman
+
+Spiderman01 Feb 2026, 10:12 AM #momentum
+
+**MCX Q3FY26 – Record Volumes & Revenue Surge; Options Dominate Growth**  
+  
+#Q3FY26 #Exchange  
+  
+**Financial Highlights**  
+\- Consolidated revenue ₹666 Cr, +121% YoY; EBITDA ₹527 Cr, +144% YoY.  
+\- PAT ₹401 Cr, +151% YoY.  
+\- 9M revenue +72% to ₹1,413 Cr; PAT +89% to ₹802 Cr.  
+\- ADTV ₹7.5 lakh Cr (futures + options); +220% YoY on 9M basis.  
+\- Revenue split: Futures ₹227 Cr, Options ₹380 Cr.  
+  
+**Operational Momentum**  
+\- Traded UCCs jumped sharply on new members & aligned user experience (common ledger/front screen for retail).  
+\- Headroom remains in UCC growth & new equity-active members entering commodities.  
+\- Bullion 69% of ADTV, driven by gold/silver options, mini gold (10g), monthly options, smaller contracts & MCX iCOMDEX Bullion Index.  
+\- New members, FBIs & domestic FIs boosted volumes.  
+  
+**Product & Segment Performance**  
+\- Base metals +156% QoQ, +77% YoY: Copper to single warehouse; nickel relaunched with differential units; zinc traction; GST awareness & member commodity desks key.  
+\- Ongoing warehouse consolidation/rationalization for other metals.  
+\- Index futures gaining traction; options slower but expected to follow.  
+\- Healthy deliveries in gold/silver (no extra cost to MCX; managed via warehouses/participant fees). No abnormal short deliveries.  
+  
+**Technology & Capacity**  
+\- Systems handled significant order volume spikes; well-placed for 3\-4x current volumes, targeting 10x readiness.  
+\- Continuous BAU investments in resilience, scalability & volatility management.  
+\- No major capex callout; treated as ongoing quarterly activity.  
+  
+**Risk Management**  
+\- Margins volatility-driven (highest globally; EWMA model); auto-adjust daily (up in gold, silver, copper, metals, nat gas).  
+\- SGF SEBI-prescribed; provides default safety net & margin flexibility.  
+\- M2M limits risk to single day; strong framework protects exchange/clearinghouse.  
+  
+**Expenses & Margins**  
+\- Current opex lagging growth; will normalize with tech/operating needs for sustained volumes.  
+\- Avoid quarterly guidance; assess at FY-end.  
+\- Float income \~₹45 Cr; warehousing from subsidiary. Product license fees tied to energy (CME settlement).  
+  
+**Strategic Initiatives**  
+\- Stabilizing recent launches; healthy pipeline timed per market needs.  
+\- Thrust on all segments (agri, bullion, metals, energy); options post ₹1,000 Cr ADT futures threshold.  
+\- Market outreach, awareness & ecosystem capacity building.  
+\- FBI onboarding renewed post lull; growing FBI volumes.  
+  
+**Outlook**  
+\- Momentum to continue “for some time”; January numbers strong.  
+\- Substantial headroom vs commodity derivatives potential in India.  
+\- Growth mode: capex/dividends post-year-end review.  
+\- Positive on volatility (up/down) driving derivatives role.  
+  
+**Competition & Macro**  
+\- Competition risk exists; countered via product innovation, participation growth, tech/ops/risk excellence.  
+\- No SEBI intimation on market split; no new price discovery sharing.  
+\- Macro volatility + domestic/global activity fueling volumes.  
+  
+**Key Takeaway:**  
+MCX delivers blockbuster Q3 with options-led volume explosion and peak profitability; sustained tech investments and product momentum position it strongly for multi-fold ADTV growth in India's expanding commodity derivatives market.
+
+ View thread — replying to Abhinav Mehrotra
+
+S K Rahman
+
+S K Rahman20 Dec 2025, 6:29 PM #momentum
+
+So here is one approach to 12+1 12+6+3\=1 etc etc etc variant.  
+1\. Compute indicator values ,Sharpe / Variants of Sharpe like 12+1, Average of all etc EOM, Normalize/Standardize the values for comparison example October 2025  
+2\. Compute Total Future month Returns for of the November and place aligned to Stock and it Indicator Computed Values.   
+3. Summarize in group of 5/10 bucket etc.   
+This might give you hint what indicator that seems to better fit in current market.  
+  
+Example image for Sharpe and Total Return indicator standardized using Percentile conversion
+
+ View thread — replying to Abhinav Mehrotra
+
+Alex Thomas
+
+Alex Thomas28 Nov 2025, 7:50 PM(edited) #momentum
+
+Nov 25: +3.41%  
+  
+Strategy:  
+• Stocks: 25  
+• WRH - 75  
+• Universe: All NSE   
+• Ranking: Sharpe ROC; average of (12,6,3 months)  
+• Allocation: 100% Equity 0% Cash
+
+👍13
+
+👍🏻2
+
+👍🏽1
+
+👍🏾1
+
+👍🏼2
+
+Viraj Khatavkar
+
+Viraj Khatavkar24 Sep 2025, 1:56 PM(edited) #momentum
+
+@Zubin Daruwala I have backtested this kind of a strategy. Here are the challenges and what I observed after checking trades, etc:  
+  
+• Most of the ETFs were listed in the past few years; if you try to do it from 2011 or 2012, there aren't many ETFs to check out. Therefore, you must use total return indices as a proxy. This introduces another complication: we can't backtest using the actual traded price.  
+• Most of the outperformance for this strategy came from allocating to foreign and commodity ETFs. If you remove them and only use sector plus broad market domestic ETFs or indices, then the strategy underperforms even Nifty  
+• A 12\-month or average of 12\-9-6\-3, etc., didn't perform as well as the standard 3\-month Sharpe lookback. So shorter lookback vastly outperforms.  
+• Outperformance vanishes post 3\-5 holdings  
+• In actual trading, it is almost impossible to deploy huge capital because there is not enough liquidity to deploy 20-50L of capital, so eventually you will work against yourself
+
+ View thread — replying to Zubin Daruwala
+
+➕1
+
+Prashant kulkarni
+
+Prashant kulkarni14 Sep 2025, 8:14 PM #momentum
+
+@Abhinav Mehrotra Need some inputs, is "BLACKBUCK" part of your PF or is it coming in your top 30 rankings? For end of August, in my rankings it came in at 9 and for end of 12\-Sep, it is still in top 25(avg sharpe of 12/9/6/3 Months) but could not buy as there was no vacancy. I usually compare my rankings with your page here - <https://abimehrotra.wixsite.com/mysite/nse750-12-9-6-3m-momentum-rankings> but in your page, it shows up at 72\. However the top rankings rankings upto 75-100 more or less matching except this, so wondering anything I am doing wrong(I use GF data)  
+
+```
+ 12-September
+GABRIEL
+FORCEMOT
+IXIGO
+EICHERMOT
+CHOICEIN
+MAHSCOOTER
+LAURUSLABS
+NESCO
+AIIL
+FORTIS
+SYRMA
+YATHARTH
+LTF
+ANANDRATHI
+TVSMOTOR
+MFSL
+ABCAPITAL
+MARUTI
+BLACKBUCK
+PAYTM
+GMDCLTD
+HYUNDAI
+CARTRADE
+JKCEMENT
+GVT&D
+ABDL
+DELHIVERY
+HBLENGINE
+RBLBANK
+HCG
+SHAILY
+IMFA
+MANAPPURAM
+HDFCAMC
+DALBHARAT
+NYKAA
+GLENMARK
+ASTERDM
+BOSCHLTD
+MUTHOOTFIN
+KRBL
+ZYDUSWELL
+ACUTAAS
+GODFRYPHLP
+PARADEEP
+VMM
+KIMS
+DATAMATICS
+NUVOCO
+ACUTAAS
+```
+
+ 2 replies
+
+ApekshaPrashant kulkarni
+
+Abhinav Mehrotra
+
+Abhinav Mehrotra01 Aug 2025, 11:54 AM #momentum
+
+Every metric has its flaws. Can't eliminate them even with choosing a composite ranking parameter. We account for path dependency by taking multiple LBs. Though we should take discrete periods like 1\_3, 4\_6, 7\_9, 10\_12 instead of normal 12/9/6/3m ROC or sharpe.
+
+ View thread — replying to Devarsh Shah
+
+🙏1
+
+Rajesh katariya
+
+Rajesh katariya30 Jun 2025, 9:36 AM #momentum
+
+Good Morning, I have attached herewith the Ranking based on 12\-9-6\-3 Months Sharpe average. My universe is N500, please confirm if my ranking is in line with your(who are following the same kind of ranking system)! I want a reasonable match to cross check if I am doing a blunder rather than exact match because there might be other filters.
+
+ 5 replies
+
+Suhas KothavaleMaheshGAbhinav Mehrotra +1
+
+Vikrant
+
+Vikrant31 May 2025, 1:10 AM #momentum
+
+Like 12m sharpe, you can deduce 6 month, 3 month sharpe, export the excel and take avg of all, then rank the result. This way you can get multiple LB period avg sharpe.
+
+ View thread — replying to Rajesh katariya
+
+💡1
+
+Rajesh katariya
+
+Rajesh katariya29 May 2025, 7:53 PM(edited) #momentum
+
+<https://portfolioyogaelite.slack.com/archives/C011BCVPB7G/p1748521931188729?thread%5Fts=1748521567.411579&cid=C011BCVPB7G>  
+Any one using avg of 12\-9-6\-3 Sharpe on Chartink Atlas, please share the dashboard link if possible.
+
+ View thread — replying to Rajesh katariya
+
+Apeksha
+
+Apeksha29 May 2025, 6:02 PM #momentum
+
+Try avg of 12\-9-6\-3 sharpe. Or even 6\-3 if u want faster entry + exit to wrh  
+  
+12M sharpe will take longer for stocks to come into top rankings + exit from top rankings. 
+
+ View thread — replying to Rajesh katariya
+
+💡1
+
+Kedar Kulkarni
+
+Kedar Kulkarni17 May 2025, 3:46 PM(edited) #momentum
+
+Guys:  
+Doing some research over the weekend. Wish to take a pulse of the crowd here. Based on your experience of executing momo strategies, please answer the following 2 questions: **(Note: not expecting the answer to be very accurate/ scientific/ backtested... just use your real-life experience and answer based on your gut feel - please answer for each of the 2 questions independently)**  
+  
+(1) Rank the following models (A to D) in descending order of return likelihood (higher return to lower return)?  
+(2) Rank the following models (A to D) in descending order of churn (higher churn to lower churn)?  
+  
+(A) Avg of 3\-6\-9-12M \- Raw (ie without vol adj)  
+(B) Avg of 3\-6\-9-12M \- Sharpe  
+(C) 12M \- Raw  
+(D) 12M \- Sharpe  
+  
+Thanks !!
+
+ 18 replies
+
+neeraj sarohaKedar KulkarniAnand M +4
+
+Anand M
+
+Anand M04 May 2025, 9:51 AM #momentum
+
+Tactical cash call  
+Great question — applying **Tactical Asset Allocation (TAA)** or a **cash call overlay** on top of a **momentum strategy** adds a **macro-level risk control** that can improve downside protection and adaptability during market stress.  
+Let’s break it down clearly.  
+  
+🧠 Goal  
+You have a momentum-based strategy (e.g., rotating stocks or ETFs based on 6m/12m returns). Now you want to:  
+• **Reduce risk** in bear markets  
+• **Hold cash** or defensive assets (e.g., bonds, gold) when momentum fails  
+• **Avoid large drawdowns** while maintaining trend-following exposure  
+🧭 Step-by-Step: How to Add Tactical Asset Allocation / Cash Overlay  
+  
+✅ 1\. **Define a Market Regime Signal (Risk Indicator)**  
+Pick one or more **macro or technical indicators** to determine when to go “risk-off”:  
+🔹 Common TAA Regime Filters:  
+ Indicator Risk-Off Signal **Moving Average (MA)** Index (e.g., S&P 500) is below its 200-day MA **Breadth** Fewer than X% of stocks are above their 200-day MA **Volatility (VIX)** VIX > 20 or rising rapidly **Rate of Change** Index 6m return < 0% **Composite Score** Combine above signals with weights You can also build a **custom regime model** using logistic regression or machine learning if needed.  
+  
+✅ 2\. **Define Allocation Shifts (What Happens When Risk Is High)**  
+Once your risk signal is triggered, reallocate a portion of the portfolio:  
+Common Actions:  
+ Mode Allocation **Risk-On** 100% Momentum Portfolio (e.g., top 10 stocks/ETFs) **Risk-Off (partial)** 50% Momentum, 50% Cash or Treasuries **Risk-Off (full)** 100% Cash, Bonds, or Defensive Assets You can do **hard switches** or **smooth transitions** using signal strength (e.g., cash weight = 1 − regime\_score).  
+  
+✅ 3. **Blend With Momentum Portfolio**  
+Apply the overlay _after_ your momentum stock/ETF selection:  
+
+```
+if market_signal == "risk_on":
+    final_portfolio = momentum_weights
+elif market_signal == "risk_off":
+    final_portfolio = 0.5 * momentum_weights + 0.5 * cash_or_bonds
+```
+
+  
+Or with a dynamic weight:  
+
+```
+cash_weight = max(0, 1 - regime_score)
+momentum_weight = 1 - cash_weight
+final_portfolio = momentum_weight * momentum_weights
+```
+
+  
+📉 Example  
+You rotate between 10 sector ETFs using 12m momentum. But if the S&P 500 is below its 200-day MA:  
+• Hold 50% in **SHY** (1–3y Treasury ETF)  
+• Allocate only 50% to top 5 momentum ETFs  
+This reduces exposure during downtrends and preserves capital for re-entry.  
+  
+🧪 Bonus: Composite Risk Signal  
+You can build a **score-based model**:  
+Risk Score=0.5⋅MA Signal+0.3⋅VIX Signal+0.2⋅Breadth Signal\\text{Risk Score} = 0.5 \\cdot \\text{MA Signal} + 0.3 \\cdot \\text{VIX Signal} + 0.2 \\cdot \\text{Breadth Signal}Then map that to cash exposure:  
+Cash Weight=min⁡(1,Risk Score)\\text{Cash Weight} = \\min(1, \\text{Risk Score})  
+✅ Benefits  
+ Advantage Explanation **Drawdown Control** Cuts exposure during crashes **Smoother Ride** Reduces volatility for investors **Psychological Benefit** Easier to stick with during bear markets **Cash Opportunity** Preserves capital to re-enter cheaply  
+⚠️ Caveats  
+• Poor signals can lead to **whipsaws**  
+• Must avoid **overfitting** to past bear markets  
+• Missing a **sharp rebound** can hurt returns  
+Would you like a Python code example showing how to overlay a 200-day MA cash filter on top of a momentum ETF strategy?
+
+ View thread — replying to Anand M
+
+Apeksha
+
+Apeksha03 May 2025, 11:12 AM #momentum
+
+Great checklist .. From these seeing which rules already following .. this is for momentum PF strat and not 52wk high though.. but checklist can work for both I feel ..   
+  
+1\. Universe selection - N750   
+2\. Liquidity filter- Not really needed as N750 universe takes care of it.   
+3. 52wk high filter- not applied  
+4\. Ranking - avg sharpe 12\-6\-9-3 M for 20 stocks and avg sharpe 6\-3 M for 5 stocks ( total 25 stocks)   
+5\. # stocks - 25  
+6. Weightage- Equal ( may change it to mcap weightage as momentum PF size increases)   
+7\. RB - monthly  
+8\. SL rules - WRH < 75  
+9\. Max position limit - entry 4% .. RB at 10-15%  
+10\. Sector limits - Not applied bt \~ 30\-35%   
+11\. Hedge - No  
+12. Multi factor- Not yet added .. in the works   
+13\. Vol adjusted score - same as sharpe ?  
+14\. Dynamic LB periods - avg of 12\-9-6\-3 considered for 20 stocks and avg 6\-3M for 5 stocks ( 80% stocks are slower/ longer momentum and 20% stocks in PF are newer momentum)   
+15\. Portfolio optimisation- No idea what this means 😂 .. need to read  
+16\. Smarter RB - No  
+17\. Machine Learning - Will need a new brain   
+18\. Regime Detection/ Market Filters - applied
+
+ View thread — replying to Anand M
+
+Anand M
+
+Anand M03 May 2025, 10:34 AM #momentum
+
+Dynamically switching between **6\-month** and **12\-month momentum lookbacks** can enhance your strategy by adapting to changing market regimes. The idea is to \*use the right tool for the right market environment\*—shorter-term signals in fast-moving markets and longer-term ones in stable, trending conditions.  
+Here are some **advanced and practical strategies** to do that:  
+  
+1\. **Regime-Based Switching**  
+Use **macro or technical indicators** to define market regimes, then switch the lookback accordingly.  
+📈 Example: Trend-Based Regime Detection  
+• **Condition**:  
+ ◦ If S&P 500 > 200-day moving average → Bullish → Use 12\-month lookback.  
+ ◦ If S&P 500 < 200-day moving average → Bearish/Volatile → Use 6\-month lookback.  
+• **Why**: In trending markets, longer-term momentum dominates. In volatile/down markets, shorter-term momentum is more responsive.  
+📉 Example: VIX Threshold  
+• If **VIX > 20** → Market is volatile → Use 6\-month.  
+• If **VIX ≤ 20** → Market is calm → Use 12\-month.  
+2\. **Momentum Signal Strength Comparison**  
+At each rebalance, compute both 6\-month and 12\-month momentum ranks:  
+• Compare the **average rank correlation** or **Sharpe ratio** of each signal across your universe.  
+• Choose the one with:  
+ ◦ Higher average signal strength  
+ ◦ Better dispersion (larger performance spread between top and bottom ranked stocks)  
+• **Why**: Dynamically favors the more "informative" momentum signal in current conditions.  
+3. **Machine Learning-Based Selection**  
+Train a model (e.g., **XGBoost**, **Random Forest**) to predict which lookback (6m or 12m) leads to better future returns based on:  
+• Market regime indicators (VIX, yield curve, volatility)  
+• Macro factors (e.g., Fed rate, inflation trend)  
+• Technical indicators (breadth, volume spikes, moving average slopes)  
+Let the model **choose the lookback** per period (or even per asset).  
+  
+4\. **Hybrid Momentum Signal (Weighted Blend)**  
+Instead of hard switching, use a **weighted average** where weights depend on volatility, trend strength, or other indicators.  
+• Momentum=w×R6m+(1−w)×R12m\\text{Momentum} = w \\times R\_{6m} + (1 - w) \\times R\_{12m}Momentum=w×R6m​+(1−w)×R12m​Set **www** dynamically based on:  
+ ◦ Rolling realized volatility (e.g., higher vol → higher weight on 6m)  
+ ◦ Slope of market index MA (steep trend → higher weight on 12m)  
+5\. **Cross-Sectional Performance Tracker**  
+Track **rolling performance** of portfolios built with 6m vs 12m momentum:  
+• If 6m\-based portfolio outperforms 12m over the last 3–6 months, switch to 6m, and vice versa.  
+• Could be done using **cumulative return or Sharpe ratio differentials**.  
+6. **Ensemble Learning (Meta-Model Switching)**  
+Build two sub-strategies:  
+• One using 6m momentum.  
+• One using 12m momentum.  
+Then create a **meta-strategy** that:  
+• Allocates capital dynamically between the two based on past performance, signal quality, or reinforcement learning.  
+This creates a **robust ensemble model** where allocation shifts instead of pure switching.  
+  
+7\. **Clustering-Based Approach**  
+Use **unsupervised learning (e.g., K-means)** on market features (volatility, correlation, macro) to identify latent regimes.  
+• Assign each cluster a preferred lookback based on backtested outcomes.  
+• In live trading, assign the current regime to a cluster and follow the corresponding lookback rule.  
+Final Tip: Always Backtest  
+Before deploying dynamic switching, ensure:  
+• Switching logic is **robust out-of-sample**  
+• Doesn’t **overfit to historical quirks**  
+• Handles **transaction costs and turnover impact**  
+
+ View thread — replying to Anand M
+
+👍1
+
+Anand M
+
+Anand M03 May 2025, 8:50 AM #momentum
+
+Improving a **rotational momentum strategy with a 52-week high filter** involves fine-tuning factors to enhance **risk-adjusted returns**, **reduce drawdowns**, and **increase robustness**. Here are practical, research-backed ways to improve it:  
+  
+🔧 1\. **Add Multi-Factor Filters**  
+✔️ Combine Momentum with Quality or Low Volatility  
+• **Quality**: Use metrics like return on equity (ROE), gross profit-to-assets, or low debt.  
+• **Low Volatility**: Favor stocks with low historical volatility or low beta.  
+• ✅ **Why**: Helps avoid volatile or speculative stocks that happen to be near highs.  
+**Example**: Rank stocks by momentum _only_ if they have ROE > 10% and 6\-month volatility < 30%.  
+  
+📉 2\. **Volatility-Adjusted Momentum**  
+• Adjust momentum score by volatility:  
+• Risk-Adjusted Momentum=12\-1 Month ReturnVolatility\\text{Risk-Adjusted Momentum} = \\frac{\\text{12\-1 Month Return}}{\\text{Volatility}}Risk-Adjusted Momentum=Volatility12-1 Month Return  
+• ✅ **Why**: Reduces the likelihood of overexposing the portfolio to high-risk names.  
+📆 3. **Dynamic Lookback Periods**  
+• Blend multiple momentum horizons (e.g., 3, 6, and 12 months):  
+• Blended Momentum=0.2×R3m+0.3×R6m+0.5×R12m\\text{Blended Momentum} = 0.2 \\times R\_{3m} + 0.3 \\times R\_{6m} + 0.5 \\times R\_{12m}Blended Momentum=0.2×R3m​+0.3×R6m​+0.5×R12m  
+• ✅ **Why**: Makes the signal more robust to regime changes and avoids dependence on a single period.  
+💼 4\. **Portfolio Optimization**  
+Instead of equal weighting:  
+• **Use max Sharpe weighting** or **minimum variance optimization** (with constraints).  
+• **Volatility parity**: Allocate based on inverse volatility.  
+✅ **Why**: Improves capital efficiency and reduces concentration risk.  
+  
+🔁 5\. **Adaptive 52-Week High Threshold**  
+• Make the threshold **dynamic** based on market regime:  
+ ◦ Bull market: Use 0.90–1.00 (aggressive).  
+ ◦ Bear market: Tighten to 0.95–1.00 (conservative).  
+• Or dynamically adjust the threshold based on VIX levels or trend indicators.  
+✅ **Why**: Helps adapt to changing market conditions and avoid premature re-entries.  
+  
+⏱️ 6. **Smarter Rebalancing**  
+• Use **signal thresholds** to reduce turnover (e.g., only sell if momentum drops below median).  
+• Consider **staggered rebalancing** (e.g., rebalance ⅓ of positions every 2 weeks).  
+✅ **Why**: Reduces churn, slippage, and tax impact.  
+  
+🧠 7\. **Use Machine Learning for Ranking**  
+• Use models (e.g., XGBoost, LightGBM) to rank stocks based on features:  
+ ◦ Momentum, 52-week high proximity, quality, liquidity, etc.  
+• ✅ **Why**: Learns nonlinear relationships and interactions between factors.  
+🚨 8\. **Regime Detection / Market Filters**  
+• Only rotate into momentum stocks when:  
+ ◦ The S&P 500 is above its 200-day MA (trend-following filter).  
+ ◦ VIX is below a threshold.  
+• ✅ **Why**: Momentum underperforms in bear or sideways markets.  
+Would you like a backtest template or a code framework implementing any of these enhancements?
+
+ View thread — replying to Anand M
+
+Abhinav Mehrotra
+
+Abhinav Mehrotra16 Apr 2025, 9:28 AM #momentum
+
+During trending markets Sharpe of stocks in 1st decile would be above 1\. Only in such non-trending markets would sharpe below 1 stocks would start populating the 1st decile. The methods proposed above would keep the PF in cash during non-trending times.  
+  
+Sharpe will be a cyclical metric across market cycles, a better stable way would be to calculate the z-scores of the sharpe and not go below +1 stdev from the mean.  
+  
+I had thought of eliminating stocks based on z-scores below 1 for each LB of 3/6/9/12m LBs. But that would increase churn.
+
+ View thread — replying to Vikrant
+
+🆗1
+
+Naveen
+
+Naveen17 Mar 2025, 8:02 AM #systems\_investing
+
+From Grok @Sharat   
+Let’s break this down step-by-step to address your questions about the risk-free rate in India, its trend over the last 20 years, a comparison with the Western world, and an estimation of India’s current equity risk premium.  
+  
+\### Risk-Free Rate for India  
+The risk-free rate is typically represented by the yield on government securities, as they are considered to have negligible default risk. In India, the yield on the 10-year Government of India (G-sec) bond is commonly used as a proxy for the risk-free rate. As of today, March 16, 2025, the exact yield can fluctuate daily based on market conditions, but recent data suggests it hovers around 6.8% to 7.0%. For precision, let’s assume a current 10-year G-sec yield of approximately 6.9% based on trends observed in early 2025.  
+  
+\### Risk-Free Rate in India Over the Last 20 Years  
+Over the past two decades (2005–2025), the 10-year G-sec yield in India has varied due to factors like inflation, monetary policy by the Reserve Bank of India (RBI), and global economic conditions. Here’s a general overview based on historical trends:  
+  
+\- \*\*2005–2010\*\*: Yields were relatively high, often ranging between 7% and 9%. For instance, in 2008, amid global financial turmoil, yields peaked near 9% due to inflation pressures and tight monetary policy.  
+\- \*\*2011–2015\*\*: Yields fluctuated between 7.5% and 8.5%, reflecting persistent inflation and RBI’s efforts to stabilize the economy. In 2013, yields spiked above 9% during the "taper tantrum" when foreign capital exited emerging markets.  
+\- \*\*2016–2020\*\*: Yields began to decline as inflation moderated and the RBI adopted a more accommodative stance. By 2016, yields dropped to around 7%, and by 2020, during the COVID-19 pandemic, they fell to approximately 6%–6.5%.  
+\- \*\*2021–2025\*\*: Post-pandemic, yields rose slightly due to global inflationary pressures and RBI rate hikes to combat inflation, stabilizing around 6.5%–7% in 2023–2025.  
+  
+On average, over the last 20 years, India’s risk-free rate has likely averaged around 7.5%, though this is a rough estimate as it masks significant year-to-year volatility.  
+  
+\### Comparison with the Western World  
+In the "Western world" (typically referring to the U.S. and major European economies), the risk-free rate is often proxied by yields on U.S. Treasury bonds or German Bunds. Here’s how they compare:  
+  
+\- \*\*United States (10-Year Treasury)\*\*:  
+ \- \*\*2005–2010\*\*: Yields ranged from 4%–5% pre-2008, dropping to 2%–3% post-financial crisis.  
+ \- \*\*2011–2015\*\*: Yields stayed low, often between 1.5% and 3%, due to quantitative easing.  
+ \- \*\*2016–2020\*\*: Yields fell further, hitting historic lows below 1% in 2020 during the pandemic.  
+ \- \*\*2021–2025\*\*: Yields rose to 3.5%–4.5% by 2025 as the Federal Reserve tightened policy, with a current estimate around 4.2% as of March 2025.  
+ \- \*\*20-year average\*\*: Roughly 3%–3.5%.  
+  
+\- \*\*Eurozone (German 10-Year Bund)\*\*:  
+ \- Yields were higher (3%–4%) in the mid-2000s but declined sharply post-2008\. By 2019–2020, they turned negative (e.g., -0.5%), and as of 2025, they’re likely around 2%–2.5%.  
+ \- \*\*20-year average\*\*: Around 1.5%–2%.  
+  
+India’s risk-free rate has consistently been higher than the Western world’s, averaging 7.5% versus 3%–3.5% in the U.S. and 1.5%–2% in the Eurozone. This reflects India’s higher inflation, greater macroeconomic volatility, and a higher country risk premium due to its emerging market status.  
+  
+\### Equity Risk Premium (ERP) for India at Present  
+The equity risk premium is the additional return investors expect from equities over the risk-free rate to compensate for the higher risk. To estimate India’s current ERP:  
+  
+1\. \*\*Risk-Free Rate\*\*: As established, let’s use 6.9% for India in March 2025.  
+2\. \*\*Western World Benchmark\*\*: In mature markets like the U.S., the ERP is often estimated at 5%–6%. Kroll’s latest data (as of early 2025) suggests a U.S. ERP of 5.0%, down from 5.5% in 2022, reflecting a reassessment of market risks. Adding this to the U.S. risk-free rate (4.2%) gives an expected equity return of 9.2%.  
+3. \*\*India’s Additional Risk\*\*: Emerging markets like India carry additional risks (e.g., political instability, currency volatility, and market liquidity). This is captured by a country risk premium (CRP). Aswath Damodaran’s January 2025 estimates suggest India’s CRP is around 3%–3.5%, based on its sovereign credit rating (BBB-/Baa3) and relative equity market volatility.  
+4\. \*\*Total ERP for India\*\*:   
+ \- Mature market ERP (U.S.): 5.0%  
+ \- India’s CRP: 3.5%  
+ \- Total ERP = 5.0% + 3.5% = 8.5%  
+5\. \*\*Cost of Equity\*\*: Adding the ERP to India’s risk-free rate: 6.9% + 8.5% = 15.4%.  
+  
+Alternatively, historical studies (e.g., IIMA’s 2006 paper) suggest India’s ERP has been 8.75% (geometric mean) to 12.5% (arithmetic mean) over 25 years, while more recent analyses (e.g., Incwert’s 2023 study) recommend 7.5% based on market conditions. Given India’s growth trajectory and stabilizing economy, an ERP of 8%–9% seems reasonable today, aligning with both historical and adjusted global benchmarks.  
+  
+\### Conclusion  
+\- \*\*Current Risk-Free Rate in India\*\*: \~6.9% (10-year G-sec yield).  
+\- \*\*Last 20 Years\*\*: Averaged \~7.5%, higher than the U.S. (\~3%–3.5%) and Eurozone (\~1.5%–2%) due to inflation and emerging market dynamics.  
+\- \*\*Current Equity Risk Premium for India\*\*: Likely 8%–9%, reflecting a mature market ERP (5%) plus a country risk premium (3%–3.5%). This suggests an expected equity return of 14.9%–15.9%, which is plausible given India’s high-growth, high-risk profile compared to the Western world’s 9%–10%.  
+  
+These figures are estimates based on available trends and methodologies, and actual values could shift with new economic data or market sentiment.
+
+ View thread — replying to Sharat
+
+Anil prabhu
+
+Anil prabhu08 Mar 2025, 10:57 AM #momentum
+
+In momentum strategies, is it advisable to bring in indicators as an additional filter? Say you get a shortlist of 20 stocks based on sharpe over 3,6,12 months. Instead of investing right away il put them in watchlist and enter only when any indicator gives a bullish close on 1 day tf. Exit as usual on rebalance day (monthly/quarterly).
+
+ 8 replies
+
+Rajesh katariyaMaheshGAnil prabhu +1
+
+Rayhan
+
+Rayhan01 Mar 2025, 9:46 AM #momentum
+
+My ranks (Avg of 3M \+ 6M Sharpe), based on Viraj's data:  
+SBICARD - 8 with 16.56% 12m returns  
+SRF - 24 with 16.98% 12m returns  
+NH - 21 with 7.64% 12m returns  
+BAJAJFINSERV - 22 with 17.47% 12m returns  
+KOTAKBANK - 40 with 12.64% 12m returns
+
+ View thread — replying to Abhinav Mehrotra
+
+🙏🏻1
+
+Punk Floyd
+
+Punk Floyd23 Feb 2025, 2:48 PM #momentum
+
+Mahesh, what is your ranking criteria? average sharpe for 3m, 6m, 9m and 12m?
+
+ View thread — replying to Rajesh katariya
+
+Abhinav Mehrotra
+
+Abhinav Mehrotra02 Feb 2025, 5:55 PM(edited) #momentum
+
+Each stocks 12m sharpe Z score = (each stocks 12m sharpe \- mean of all 12m sharpe of entire universe)/stdev of 12m sharpe of entire universe  
+Repeat for 9/6/3m.  
+Viraj has put up a video on his YT. NSE methodology document also has it.
+
+ View thread — replying to AjayT
+
+:thankyou:1
+
+Abhinav Mehrotra
+
+Abhinav Mehrotra02 Feb 2025, 5:51 PM #momentum
+
+I think what Mahesh is trying to say is that usually 12m ROC is highest compared to 9/6/3m ROC, assuming you used the same 12m STDEV for calculating all sharpes with different LBs, the 12m Sharpe will almost always be highest and thus the avg. Will be skewed by 12m more.
+
+ View thread — replying to AjayT

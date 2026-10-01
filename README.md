@@ -1,38 +1,53 @@
-# India Momentum Portfolio Research
+# Momentum Screen Builder
 
-Research notes and small utilities for **DIY momentum portfolios** on NSE, based on the Portfolio Yoga (PY-Slack) community, [MomoIndiaScreener](https://momoindiascreener.in/), and official NSE/Nifty Indices data.
+Web app to **create and run NSE momentum screens** with the same **64 “Sort by” factors** as [MomoIndiaScreener](https://momoindiascreener.in/), plus MomoIndia-style filters (liquidity, % positive days, MA200, distance from highs, circuits, multi-sort, presets).
 
-## Contents
+## Stack
 
-- **[docs/momentum-portfolios-guide.md](docs/momentum-portfolios-guide.md)** — Full write-up: system design, WRH, MomoIndia filters, bhavcopy, index universes, historical constituents.
-- **`scripts/nse_universe.py`** — Download **current** Nifty index constituent symbols (50, 500, Total Market / ~750, mid/small/micro, etc.).
-- **`scripts/bhavcopy_fetch.py`** — Fetch one day of **full equity bhavcopy** via `aynse`.
+- **UI:** Next.js 16, TypeScript, Tailwind, shadcn/ui  
+- **Engine:** Python (`engine/`) — metrics, filters, NSE bhavcopy cache via [aynse](https://github.com/sudotman/aynse)  
+- **Universes:** Nifty Indices constituent CSVs (50, 500, Total Market / N750 proxy, mid/small/micro, etc.)
 
-## Quick start
+## Run locally
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
+# Node
+npm install
+npm run dev
+# → http://127.0.0.1:43123
+
+# Python (API route invokes this)
 pip install -r requirements.txt
-
-# Current Nifty 500 symbols
-python scripts/nse_universe.py NIFTY_500 --symbols-only | head
-
-# Nifty Total Market (~755 names — community "N750" universe proxy)
-python scripts/nse_universe.py NIFTY_TOTAL_MARKET --symbols-only | wc -l
-
-# Latest available full bhavcopy
-python scripts/bhavcopy_fetch.py --date 2026-09-29 --out /tmp/bhav.csv
 ```
 
-## Data sources (summary)
+First screen run **syncs ~280 trading days** of bhavcopy into `data/prices.sqlite` (can take several minutes). Later runs are incremental.
 
-| Need | Source |
-|------|--------|
-| Daily OHLCV (equities) | NSE `sec_bhavdata_full` / CM-UDiFF bhavcopy; `aynse full_bhavcopy_df` |
-| Index OHLC | NSE index bhavcopy (`ind_close_all`, etc.) |
-| **Current** index members | [niftyindices.com IndexConstituent CSVs](https://www.niftyindices.com/) |
-| **Historical** members | `IndexInclExcl.xls`, monthly weightage archives, AMFI lists, or reconstructed from bhavcopy |
+## CLI (optional)
 
-## Disclaimer
+```bash
+PYTHONPATH=. python3 -m engine.screen <<'JSON'
+{"index":"is_nifty_500","sort_by":"average_sharpe_return_12_6_3_months","limit":20}
+JSON
+```
 
-Educational research only—not investment advice. Momentum strategies can draw down sharply; backtests are sensitive to survivorship bias and taxes.
+## Features
+
+| Area | Support |
+|------|---------|
+| Sort by | All **64** dropdown values |
+| Sort direction | Highest → lowest / reverse |
+| Secondary / tertiary sort | Yes |
+| Index universe | 15 options (see UI) |
+| Filters | Median volume, away-from-high (1Y/5Y/ATH), MA100/200, repo min return, return > vol, % positive days, max circuit days, ignore top beta, apply on all vs ranked |
+| Presets | Viraj-style, Sharpe 1Y, Low vol |
+
+## Limitations
+
+- **P/E and market cap** need fundamentals (not in bhavcopy); those sorts/filters are stubs until you add a fundamentals source.  
+- **Nifty F&O** universe uses N500 as proxy. **5Y high** uses cached history (full 5Y needs longer sync).  
+- **ETF universe** not implemented yet.  
+- Educational use only — not investment advice.
+
+## Docs
+
+See [docs/momentum-portfolios-guide.md](docs/momentum-portfolios-guide.md) for background on DIY momentum and data sources.
