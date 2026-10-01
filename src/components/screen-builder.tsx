@@ -84,7 +84,24 @@ export function ScreenBuilder() {
     }
   }
 
-  function loadPreset(name: "viraj" | "sharpe" | "lowvol") {
+  function loadPreset(name: "momo1" | "viraj" | "sharpe" | "lowvol") {
+    if (name === "momo1") {
+      setCfg({
+        ...DEFAULT_SCREEN,
+        index: "is_nifty_total_market",
+        sort_by: "sharpe_return_1_year",
+        sort_direction: "desc",
+        sort_by_two: "none",
+        sort_by_three: "none",
+        median_volume: 0,
+        ma_200: "no",
+        ma_100: "no",
+        apply_filters_on: "all",
+        series: "all",
+        limit: 210,
+      });
+      return;
+    }
     if (name === "viraj") {
       setCfg({
         ...DEFAULT_SCREEN,
@@ -121,6 +138,9 @@ export function ScreenBuilder() {
           trend filters. Prices sync from NSE bhavcopy on each run (first run may take a few minutes).
         </p>
         <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={() => loadPreset("momo1")}>
+            Momo screen #1
+          </Button>
           <Button type="button" variant="outline" size="sm" onClick={() => loadPreset("viraj")}>
             Viraj-style preset
           </Button>

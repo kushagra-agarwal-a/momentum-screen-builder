@@ -1,4 +1,6 @@
-export type Bar = { date: string; close: number; high: number; volume: number };
+export type Bar = { date: string; close: number; high: number; volume: number; series?: string };
+
+export type SeriesMode = "all" | "eq";
 
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
@@ -48,7 +50,12 @@ function parseCsvLine(line: string): string[] {
   return out;
 }
 
-async function fetchDay(date: Date): Promise<Map<string, Bar>> {
+function seriesAllowed(series: string, mode: SeriesMode) {
+  if (mode === "eq") return series === "EQ";
+  return series === "EQ" || series === "BE";
+}
+
+async function fetchDay(date: Date, mode: SeriesMode): Promise<Map<string, Bar>> {
   const { path, iso } = formatDate(date);
   const url = `https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_${path}.csv`;
   const res = await fetch(url, {
@@ -68,14 +75,19 @@ async function fetchDay(date: Date): Promise<Map<string, Bar>> {
   const map = new Map<string, Bar>();
   for (const line of lines.slice(1)) {
     const cols = parseCsvLine(line);
-    if (serI >= 0 && cols[serI]?.trim() !== "EQ") continue;
+    const ser = serI >= 0 ? cols[serI]?.trim() || "" : "EQ";
+    if (!seriesAllowed(ser, mode)) continue;
     const sym = cols[symI]?.trim();
     if (!sym) continue;
     const close = parseFloat(cols[closeI] || "0");
     const high = parseFloat(cols[highI] || cols[closeI] || "0");
     const volume = parseFloat(cols[volI] || "0");
     if (!close) continue;
-    map.set(sym, { date: iso, close, high, volume });
+    const bar: Bar = { date: iso, close, high, volume, series: ser };
+    const prev = map.get(sym);
+    // Prefer EQ over BE when both trade on the same day (MomoIndia includes BE names).
+    if (prev && !(prev.series === "BE" && ser === "EQ")) continue;
+    map.set(sym, bar);
   }
   return map;
 }
@@ -83,6 +95,7 @@ async function fetchDay(date: Date): Promise<Map<string, Bar>> {
 export async function loadPriceHistory(
   symbols: string[],
   lookbackDays: number,
+  seriesMode: SeriesMode = "all",
 ): Promise<{ bySymbol: Map<string, Bar[]>; fetchedDays: number; asOf: string | null }> {
   const symbolSet = new Set(symbols);
   const days = tradingDays(new Date(), lookbackDays);
@@ -95,7 +108,7 @@ export async function loadPriceHistory(
   const batchSize = 12;
   for (let i = 0; i < days.length; i += batchSize) {
     const chunk = days.slice(i, i + batchSize);
-    const maps = await Promise.all(chunk.map((d) => fetchDay(d)));
+    const maps = await Promise.all(chunk.map((d) => fetchDay(d, seriesMode)));
     for (const dayMap of maps) {
       if (dayMap.size === 0) continue;
       fetched++;

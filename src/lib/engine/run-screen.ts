@@ -35,6 +35,7 @@ export type ScreenInput = {
   exclude_stocks_with_circuits_one_year: number;
   apply_filters_on: "all" | "ranked";
   ignore_top_beta: "yes" | "no";
+  series: "all" | "eq";
   limit: number;
   sync_data: boolean;
 };
@@ -144,7 +145,8 @@ export async function runScreen(cfg: ScreenInput) {
   const symbols = await fetchIndexSymbols(cfg.index);
   if (!symbols.length) return { error: "Empty universe" };
 
-  const { bySymbol, fetchedDays, asOf } = await loadPriceHistory(symbols, lookback);
+  const seriesMode = cfg.series === "eq" ? "eq" : "all";
+  const { bySymbol, fetchedDays, asOf } = await loadPriceHistory(symbols, lookback, seriesMode);
 
   const benchSyms = (await fetchIndexSymbols("is_nifty_50")).slice(0, 20);
   let benchCloses: number[] = [];
