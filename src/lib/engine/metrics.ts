@@ -282,7 +282,7 @@ export { W_12M, W_6M, W_1M, calendarLookbackTradingDays };
 
 /** Minimum trading days to fetch so calendar windows can resolve. */
 export function minTradingDaysForSortKey(key: string): number {
-  if (key === "none" || key === "price_to_earnings" || key === "marketcap") return 0;
+  if (!key || key === "none" || key === "price_to_earnings" || key === "marketcap") return 0;
   if (key === "close" || key === "close_raw") return 1;
   if (key === "away_from_high_all_time") return 5;
   if (

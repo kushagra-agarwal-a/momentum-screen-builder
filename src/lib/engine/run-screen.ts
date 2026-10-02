@@ -94,7 +94,9 @@ function passesFilters(row: Record<string, unknown>, cfg: ScreenInput) {
 }
 
 function requiredLookbackDays(cfg: ScreenInput): number {
-  const sortKeys = [cfg.sort_by, cfg.sort_by_two, cfg.sort_by_three].filter((k) => k !== "none");
+  const sortKeys = [cfg.sort_by, cfg.sort_by_two, cfg.sort_by_three].filter(
+    (k): k is string => typeof k === "string" && k !== "none",
+  );
   let need = sortKeys.reduce((m, k) => Math.max(m, minTradingDaysForSortKey(k)), 35);
   if (cfg.ma_200 === "yes") need = Math.max(need, 200);
   if (cfg.ma_100 === "yes") need = Math.max(need, 100);
