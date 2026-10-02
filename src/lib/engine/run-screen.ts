@@ -1,6 +1,7 @@
 import { SORT_OPTIONS } from "@/lib/screen-config";
-import { loadPriceHistory } from "./bhavcopy";
+import { loadPriceHistory, type Bar } from "./bhavcopy";
 import { mergeLiveLtp } from "./live-ltp";
+import { backAdjustBars, fetchCorporateActions } from "./corporate-actions";
 import { closesForMetrics, lastDisplayPrice } from "./prices";
 import {
   W_12M,
@@ -40,6 +41,7 @@ export type ScreenInput = {
   series: "all" | "eq";
   limit: number;
   sync_data: boolean;
+  apply_corporate_actions?: boolean;
 };
 
 function median(arr: number[]) {
@@ -170,10 +172,9 @@ export async function runScreen(cfg: ScreenInput) {
     );
   }
 
-  let rows: Record<string, unknown>[] = [];
-  for (const sym of symbols) {
-    const bars = bySymbol.get(sym);
-    if (!bars || bars.length < 30) continue;
+  const applyCa = cfg.apply_corporate_actions !== false;
+
+  function buildRow(sym: string, bars: Bar[], caNotes: string[] = []) {
     const closes = closesForMetrics(bars);
     const highs = bars.map((b) => b.high);
     const display = lastDisplayPrice(bars);
@@ -202,7 +203,40 @@ export async function runScreen(cfg: ScreenInput) {
       pct_pos_3m: pctPos(closes, W_3M),
       circuit_hits_1y: circuits(closes, W_12M),
       beta: metrics.beta,
+      ca_notes: caNotes.length ? caNotes : undefined,
     });
+  }
+
+  let rows: Record<string, unknown>[] = [];
+  for (const sym of symbols) {
+    const bars = bySymbol.get(sym);
+    if (!bars || bars.length < 30) continue;
+    buildRow(sym, bars);
+  }
+
+  if (applyCa && rows.length) {
+    const caCache = new Map<string, Awaited<ReturnType<typeof fetchCorporateActions>>>();
+    const cap = process.env.VERCEL ? 120 : rows.length;
+    const prelim = [...rows]
+      .sort((a, b) => {
+        const va = (a.metrics as Record<string, number | null>)[cfg.sort_by];
+        const vb = (b.metrics as Record<string, number | null>)[cfg.sort_by];
+        if (va == null && vb == null) return 0;
+        if (va == null) return 1;
+        if (vb == null) return -1;
+        return cfg.sort_direction === "desc" ? vb - va : va - vb;
+      })
+      .slice(0, cap);
+    for (const row of prelim) {
+      const sym = row.symbol as string;
+      const raw = bySymbol.get(sym);
+      if (!raw) continue;
+      if (!caCache.has(sym)) caCache.set(sym, await fetchCorporateActions(sym));
+      const { bars: adjusted, notes } = backAdjustBars(raw, caCache.get(sym)!);
+      if (!notes.length) continue;
+      rows = rows.filter((r) => r.symbol !== sym);
+      buildRow(sym, adjusted, notes);
+    }
   }
 
   if (cfg.ignore_top_beta === "yes") {

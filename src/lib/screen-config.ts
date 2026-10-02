@@ -110,6 +110,7 @@ export type ScreenRequest = {
   ignore_top_beta: "yes" | "no";
   limit: number;
   sync_data: boolean;
+  apply_corporate_actions: boolean;
 };
 
 export const DEFAULT_SCREEN: ScreenRequest = {
@@ -137,4 +138,5 @@ export const DEFAULT_SCREEN: ScreenRequest = {
   ignore_top_beta: "no",
   limit: 50,
   sync_data: true,
+  apply_corporate_actions: true,
 };
