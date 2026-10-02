@@ -19,6 +19,7 @@ from engine.metrics import (
     volatility_annualized,
 )
 from engine.sort_options import SORT_KEYS, sort_option
+from engine.prices import closes_for_metrics, last_display_prices
 from engine.universe import INDEX_LABELS, fetch_index_symbols
 
 ApplyFiltersOn = Literal["all", "ranked"]
@@ -167,9 +168,10 @@ def run_screen(config_dict: dict[str, Any]) -> dict[str, Any]:
 
     rows: list[dict[str, Any]] = []
     for sym, df in series_map.items():
-        closes = df["close"].tolist()
+        closes = closes_for_metrics(df)
         highs = df["high"].tolist() if "high" in df else None
         volumes = df["volume"].tolist() if "volume" in df else None
+        ltp_disp, close_eod = last_display_prices(df)
 
         metrics: dict[str, float | None] = {}
         for key in SORT_KEYS:
@@ -177,7 +179,8 @@ def run_screen(config_dict: dict[str, Any]) -> dict[str, Any]:
 
         row = {
             "symbol": sym,
-            "close": closes[-1] if closes else None,
+            "close": ltp_disp,
+            "close_eod": close_eod,
             "metrics": metrics,
             "median_volume": median_volume(volumes or [], W_12M),
             "away_from_high_1y": metrics.get("away_from_high_1_year"),

@@ -1,4 +1,13 @@
-export type Bar = { date: string; close: number; high: number; volume: number; series?: string };
+export type Bar = {
+  date: string;
+  /** Official EOD close (CLOSE_PRICE). */
+  close: number;
+  /** Last traded price (LAST_PRICE); on the latest bar also refreshed from NSE quote when possible. */
+  ltp: number;
+  high: number;
+  volume: number;
+  series?: string;
+};
 
 export type SeriesMode = "all" | "eq";
 
@@ -68,7 +77,8 @@ async function fetchDay(date: Date, mode: SeriesMode): Promise<Map<string, Bar>>
   const headers = parseCsvLine(lines[0]).map((h) => h.trim().toLowerCase());
   const symI = headers.findIndex((h) => h === "symbol");
   const serI = headers.findIndex((h) => h === "series");
-  const closeI = headers.findIndex((h) => h.includes("close"));
+  const closeI = headers.findIndex((h) => h === "close_price" || h === "close price");
+  const ltpI = headers.findIndex((h) => h === "last_price" || h === "last price");
   const highI = headers.findIndex((h) => h === "high_price" || h === "high price");
   const volI = headers.findIndex((h) => h.includes("ttl_trd") || h.includes("total traded quantity"));
 
@@ -79,11 +89,13 @@ async function fetchDay(date: Date, mode: SeriesMode): Promise<Map<string, Bar>>
     if (!seriesAllowed(ser, mode)) continue;
     const sym = cols[symI]?.trim();
     if (!sym) continue;
-    const close = parseFloat(cols[closeI] || "0");
-    const high = parseFloat(cols[highI] || cols[closeI] || "0");
+    const close = parseFloat(cols[closeI >= 0 ? closeI : 8] || "0");
+    const ltpRaw = ltpI >= 0 ? parseFloat(cols[ltpI] || "0") : 0;
+    const ltp = ltpRaw > 0 ? ltpRaw : close;
+    const high = parseFloat(cols[highI] || String(close) || "0");
     const volume = parseFloat(cols[volI] || "0");
     if (!close) continue;
-    const bar: Bar = { date: iso, close, high, volume, series: ser };
+    const bar: Bar = { date: iso, close, ltp, high, volume, series: ser };
     const prev = map.get(sym);
     // Prefer EQ over BE when both trade on the same day (MomoIndia includes BE names).
     if (prev && !(prev.series === "BE" && ser === "EQ")) continue;

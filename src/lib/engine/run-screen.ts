@@ -1,5 +1,7 @@
 import { SORT_OPTIONS } from "@/lib/screen-config";
 import { loadPriceHistory } from "./bhavcopy";
+import { mergeLiveLtp } from "./live-ltp";
+import { closesForMetrics, lastDisplayPrice } from "./prices";
 import {
   W_12M,
   W_3M,
@@ -148,13 +150,23 @@ export async function runScreen(cfg: ScreenInput) {
   const seriesMode = cfg.series === "eq" ? "eq" : "all";
   const { bySymbol, fetchedDays, asOf } = await loadPriceHistory(symbols, lookback, seriesMode);
 
+  let liveLtp: { updated: number; liveAsOf: string | null } | undefined;
+  const todayIst = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+  const needsLiveLtp = cfg.sync_data && (!asOf || asOf < todayIst);
+  if (needsLiveLtp) {
+    const cap = process.env.VERCEL ? 80 : symbols.length;
+    liveLtp = await mergeLiveLtp(bySymbol, symbols.slice(0, cap));
+  }
+
   const benchSyms = (await fetchIndexSymbols("is_nifty_50")).slice(0, 20);
   let benchCloses: number[] = [];
   const benchBars = benchSyms.map((s) => bySymbol.get(s) || []).filter((b) => b.length > 30);
   if (benchBars.length) {
     const minLen = Math.min(...benchBars.map((b) => b.length));
-    benchCloses = Array.from({ length: minLen }, (_, i) =>
-      benchBars.reduce((sum, b) => sum + b[b.length - minLen + i].close, 0) / benchBars.length,
+    const benchSlices = benchBars.map((b) => closesForMetrics(b).slice(-minLen));
+    benchCloses = Array.from(
+      { length: minLen },
+      (_, i) => benchSlices.reduce((sum, s) => sum + s[i], 0) / benchSlices.length,
     );
   }
 
@@ -162,8 +174,9 @@ export async function runScreen(cfg: ScreenInput) {
   for (const sym of symbols) {
     const bars = bySymbol.get(sym);
     if (!bars || bars.length < 30) continue;
-    const closes = bars.map((b) => b.close);
+    const closes = closesForMetrics(bars);
     const highs = bars.map((b) => b.high);
+    const display = lastDisplayPrice(bars);
     const volumes = bars.map((b) => b.volume);
 
     const metrics: Record<string, number | null> = {};
@@ -173,7 +186,8 @@ export async function runScreen(cfg: ScreenInput) {
 
     rows.push({
       symbol: sym,
-      close: closes.at(-1),
+      close: display.ltp,
+      close_eod: display.close,
       metrics,
       median_volume: median(volumes.slice(-W_12M)),
       away_from_high_1y: metrics.away_from_high_1_year,
@@ -229,6 +243,7 @@ export async function runScreen(cfg: ScreenInput) {
     rank: i + 1,
     symbol: r.symbol,
     close: r.close,
+    close_eod: r.close_eod,
     primary: (r.metrics as Record<string, number | null>)[cfg.sort_by],
   }));
 
@@ -253,7 +268,13 @@ export async function runScreen(cfg: ScreenInput) {
     universe_count: symbols.length,
     evaluated: rows.length,
     ranked_with_primary: withPrimary,
-    sync: { fetched_days: fetchedDays, lookback_requested: lookback, vercel_mode: !!process.env.VERCEL },
+    sync: {
+      fetched_days: fetchedDays,
+      lookback_requested: lookback,
+      vercel_mode: !!process.env.VERCEL,
+      live_ltp_updated: liveLtp?.updated,
+      live_ltp_as_of: liveLtp?.liveAsOf ?? undefined,
+    },
     warning,
     rows: out,
   };

@@ -31,6 +31,7 @@ type Row = {
   rank?: number;
   symbol: string;
   close?: number;
+  close_eod?: number;
   primary?: number | null;
 };
 
@@ -42,7 +43,13 @@ type ScreenResult = {
   universe_count?: number;
   evaluated?: number;
   ranked_with_primary?: number;
-  sync?: { fetched_days?: number; lookback_requested?: number; errors?: string[] };
+  sync?: {
+    fetched_days?: number;
+    lookback_requested?: number;
+    live_ltp_updated?: number;
+    live_ltp_as_of?: string;
+    errors?: string[];
+  };
   rows?: Row[];
 };
 
@@ -411,6 +418,12 @@ export function ScreenBuilder() {
                 {result.ranked_with_primary != null && (
                   <Badge variant="outline">{result.ranked_with_primary} with sort value</Badge>
                 )}
+                {result.sync?.live_ltp_updated != null && result.sync.live_ltp_updated > 0 && (
+                  <Badge variant="outline">
+                    Live LTP {result.sync.live_ltp_updated} symbols
+                    {result.sync.live_ltp_as_of ? ` · ${result.sync.live_ltp_as_of}` : ""}
+                  </Badge>
+                )}
               </div>
             )}
             <ScrollArea className="h-[min(70vh,640px)] rounded-md border">
@@ -419,7 +432,8 @@ export function ScreenBuilder() {
                   <TableRow>
                     <TableHead className="w-12">#</TableHead>
                     <TableHead>Symbol</TableHead>
-                    <TableHead className="text-right">Close</TableHead>
+                    <TableHead className="text-right">LTP</TableHead>
+                    <TableHead className="text-right">EOD close</TableHead>
                     <TableHead className="text-right">Primary factor</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -429,12 +443,15 @@ export function ScreenBuilder() {
                       <TableCell>{r.rank}</TableCell>
                       <TableCell className="font-medium">{r.symbol}</TableCell>
                       <TableCell className="text-right">{r.close?.toFixed(2) ?? "—"}</TableCell>
+                      <TableCell className="text-right text-muted-foreground">
+                        {r.close_eod?.toFixed(2) ?? "—"}
+                      </TableCell>
                       <TableCell className="text-right">{fmtNum(r.primary)}</TableCell>
                     </TableRow>
                   ))}
                   {!loading && (result?.rows?.length ?? 0) === 0 && !result?.error && (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center text-muted-foreground">
+                      <TableCell colSpan={5} className="text-center text-muted-foreground">
                         No rows yet.
                       </TableCell>
                     </TableRow>

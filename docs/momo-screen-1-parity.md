@@ -31,7 +31,9 @@ We rank **all current Nifty Total Market CSV constituents** (~755 symbols) with 
 
 ### 4. Sharpe level on the same symbol
 
-For names both lists share (e.g. **SANSERA**, **WELCORP**), Sharpe can differ slightly because Momo almost certainly uses **corporate-action-adjusted** prices and a proprietary history stack; we use **raw NSE `CLOSE_PRICE`** from daily bhavcopy. Formula shape matches community DIY: \(\text{ROC}_{252} / (\sigma_{\text{daily}} \sqrt{252})\).
+We store **EOD `CLOSE_PRICE`** and **`LAST_PRICE` (LTP)** from bhavcopy; **ranking uses LTP on the latest bar** (and live NSE quote when today’s bhavcopy is not published yet). Momo may still differ on **corporate-action-adjusted** history. Formula: \(\text{ROC}_{252} / (\sigma_{\text{daily}} \sqrt{252})\).
+
+**Bug fix:** bhavcopy parsing previously matched `prev_close` instead of `close_price`; that is corrected.
 
 ### 5. Not investment metadata
 

@@ -21,6 +21,7 @@ def _ensure_db() -> sqlite3.Connection:
             trade_date TEXT NOT NULL,
             symbol TEXT NOT NULL,
             close REAL,
+            ltp REAL,
             high REAL,
             volume REAL,
             series TEXT,
@@ -28,6 +29,9 @@ def _ensure_db() -> sqlite3.Connection:
         )
         """
     )
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(eod)").fetchall()}
+    if "ltp" not in cols:
+        conn.execute("ALTER TABLE eod ADD COLUMN ltp REAL")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_eod_symbol ON eod(symbol)")
     conn.commit()
     return conn
@@ -80,12 +84,15 @@ def sync_bhavcopy(end: date | None = None, lookback_days: int = 280) -> dict[str
             sym = str(r.get("symbol", "")).strip()
             if not sym:
                 continue
-            close = r.get("close_price") or r.get("last_price")
+            close = float(r.get("close_price") or 0)
+            ltp = float(r.get("last_price") or close or 0)
+            if not close:
+                close = ltp
             high = r.get("high_price")
             vol = r.get("ttl_trd_qnty")
-            rows.append((iso, sym, float(close or 0), float(high or 0), float(vol or 0), "EQ"))
+            rows.append((iso, sym, close, ltp, float(high or 0), float(vol or 0), "EQ"))
         conn.executemany(
-            "INSERT OR REPLACE INTO eod (trade_date, symbol, close, high, volume, series) VALUES (?,?,?,?,?,?)",
+            "INSERT OR REPLACE INTO eod (trade_date, symbol, close, ltp, high, volume, series) VALUES (?,?,?,?,?,?,?)",
             rows,
         )
         conn.commit()
@@ -105,7 +112,7 @@ def load_series(symbols: list[str], min_days: int = 260) -> tuple[dict[str, pd.D
     start = (max_date - timedelta(days=min_days * 2)).isoformat()
     placeholders = ",".join("?" for _ in symbols)
     q = f"""
-        SELECT trade_date, symbol, close, high, volume
+        SELECT trade_date, symbol, close, ltp, high, volume
         FROM eod
         WHERE symbol IN ({placeholders}) AND trade_date >= ?
         ORDER BY symbol, trade_date

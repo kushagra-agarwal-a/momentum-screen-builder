@@ -20,7 +20,7 @@ npm run dev
 pip install -r requirements.txt
 ```
 
-First screen run **syncs ~280 trading days** of bhavcopy into `data/prices.sqlite` (can take several minutes). Later runs are incremental.
+First screen run **syncs ~280 trading days** of bhavcopy into `data/prices.sqlite` (can take several minutes). Each row stores **EOD close** (`close_price`) and **LTP** (`last_price`); rankings use **LTP on the latest bar**. Later runs are incremental.
 
 ## Live demo (Vercel)
 
