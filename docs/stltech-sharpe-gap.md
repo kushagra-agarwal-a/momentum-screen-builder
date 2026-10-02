@@ -8,7 +8,7 @@ Reference date: **2026-10-01** (same as MomoIndia screen #1).
 |---|---------------|-------------------------------|
 | Sorting factor / Sharpe | **10.88** | **12.29** |
 | Last price shown | **955.35** (BE) | **955.35** LTP |
-| Formula (ours) | (unknown; likely ROC/vol on adjusted series) | **ROC₂₅₂ ÷ (σ_daily × √252)** on last **252 trading days** |
+| Formula (ours) | (unknown; likely ROC/vol on adjusted series) | **ROC ÷ (σ_daily × √252)** on a **calendar 1Y** window (start = last bar on/before same date one year ago) |
 
 ## Our calculation (reproducible)
 
@@ -23,7 +23,7 @@ On **2026-10-01**, using NSE full bhavcopy (BE when listed, else EQ), **LAST_PRI
 
 | Input | Value |
 |--------|--------|
-| Window | Last **252** trading days ending 2026-10-01 |
+| Window | **Calendar 1Y**: ~2025-10-01 → 2026-10-01 (start = last session ≤ 2025-10-01) |
 | Start (2025-10-14) | **112.63** (EQ, `close_price`) |
 | End (2026-10-01) | **955.35** (BE, `last_price`) |
 | 1Y ROC | **748%** (955.35 / 112.63 − 1) |
@@ -48,17 +48,17 @@ STLTECH events from [NSE corporate actions API](https://www.nseindia.com/api/cor
 | 2023-08-08 | Dividend ₹1 |
 | … | Older dividends / 2010 **1:1 bonus** |
 
-### Demerger **inside** vs **outside** the 252-day window
+### Demerger **inside** vs **outside** the 1Y calendar window
 
 - **Demerger ex-date: 2025-04-24** (EQ **86.97** → BE **65.05** on the next session).  
-- Our **252-day window** runs **2025-10-14 → 2026-10-01** — entirely **after** the demerger.  
+- Our **calendar 1Y window** runs **2025-10-01 → 2026-10-01** (trading days in between) — entirely **after** the demerger.  
 - **Back-adjusting** pre–Apr-2025 prices does **not** change any price inside this window, so it **does not** explain 12.29 vs 10.88 by itself.
 
 NSE **PR archives** (`PRddmmyy.zip`, **Bc** CSV) are the official CA feed; archives often return 503 from some networks — we use the **corp-actions JSON API** plus ex-date **price ratios** from bhavcopy when the ex-date is present in the loaded series.
 
 ### EQ / BE on the same symbol
 
-Within the 252-day window:
+Within the calendar 1Y window:
 
 - **2025-10-14 → 2026-05-13**: **EQ** (e.g. 112 → 405)  
 - **2026-05-14 → 2026-10-01**: **BE** (405 → 955)  

@@ -4,12 +4,12 @@ import { mergeLiveLtp } from "./live-ltp";
 import { backAdjustBars, fetchCorporateActions } from "./corporate-actions";
 import { closesForMetrics, lastDisplayPrice } from "./prices";
 import {
-  W_12M,
-  W_3M,
-  W_6M,
+  calendarLookbackTradingDays,
+  circuitsCalendar,
   computeSortMetric,
-  dailyReturns,
+  medianVolumeCalendar,
   minTradingDaysForSortKey,
+  pctPositiveCalendar,
 } from "./metrics";
 import { INDEX_LABELS, fetchIndexSymbols } from "./universe";
 
@@ -43,23 +43,6 @@ export type ScreenInput = {
   sync_data: boolean;
   apply_corporate_actions?: boolean;
 };
-
-function median(arr: number[]) {
-  if (!arr.length) return 0;
-  const s = [...arr].sort((a, b) => a - b);
-  const m = Math.floor(s.length / 2);
-  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
-}
-
-function pctPos(closes: number[], window: number) {
-  const rets = dailyReturns(closes.slice(-window - 1));
-  if (!rets.length) return null;
-  return (100 * rets.filter((r) => r > 0).length) / rets.length;
-}
-
-function circuits(closes: number[], window: number) {
-  return dailyReturns(closes.slice(-window - 1)).filter((r) => Math.abs(r) >= 0.19).length;
-}
 
 function aboveMa(closes: number[], period: number) {
   if (closes.length < period) return null;
@@ -121,10 +104,14 @@ function requiredLookbackDays(cfg: ScreenInput): number {
     cfg.percentage_positive_days_one_year > 0 ||
     cfg.exclude_stocks_with_circuits_one_year > 0
   ) {
-    need = Math.max(need, W_12M);
+    need = Math.max(need, calendarLookbackTradingDays("1_year"));
   }
-  if (cfg.percentage_positive_days_six_months > 0) need = Math.max(need, W_6M);
-  if (cfg.percentage_positive_days_three_months > 0) need = Math.max(need, W_3M);
+  if (cfg.percentage_positive_days_six_months > 0) {
+    need = Math.max(need, calendarLookbackTradingDays("6_months"));
+  }
+  if (cfg.percentage_positive_days_three_months > 0) {
+    need = Math.max(need, calendarLookbackTradingDays("3_months"));
+  }
   // Extra calendar slack for holidays / missing bhavcopy files
   return Math.min(need + 15, 280);
 }
@@ -175,6 +162,7 @@ export async function runScreen(cfg: ScreenInput) {
   const applyCa = cfg.apply_corporate_actions !== false;
 
   function buildRow(sym: string, bars: Bar[], caNotes: string[] = []) {
+    const dates = bars.map((b) => b.date);
     const closes = closesForMetrics(bars);
     const highs = bars.map((b) => b.high);
     const display = lastDisplayPrice(bars);
@@ -182,7 +170,7 @@ export async function runScreen(cfg: ScreenInput) {
 
     const metrics: Record<string, number | null> = {};
     for (const k of SORT_KEYS) {
-      metrics[k] = computeSortMetric(k, closes, highs, benchCloses);
+      metrics[k] = computeSortMetric(k, closes, highs, benchCloses, dates);
     }
 
     rows.push({
@@ -190,7 +178,7 @@ export async function runScreen(cfg: ScreenInput) {
       close: display.ltp,
       close_eod: display.close,
       metrics,
-      median_volume: median(volumes.slice(-W_12M)),
+      median_volume: medianVolumeCalendar(volumes, dates, "1_year"),
       away_from_high_1y: metrics.away_from_high_1_year,
       away_from_high_at: metrics.away_from_high_all_time,
       away_from_high_5y: metrics.away_from_high_all_time,
@@ -198,10 +186,10 @@ export async function runScreen(cfg: ScreenInput) {
       above_ma_100: aboveMa(closes, 100),
       absolute_return_1y: metrics.absolute_return_1_year,
       volatility_1y: metrics.volatility_1_year,
-      pct_pos_1y: pctPos(closes, W_12M),
-      pct_pos_6m: pctPos(closes, W_6M),
-      pct_pos_3m: pctPos(closes, W_3M),
-      circuit_hits_1y: circuits(closes, W_12M),
+      pct_pos_1y: pctPositiveCalendar(closes, dates, "1_year"),
+      pct_pos_6m: pctPositiveCalendar(closes, dates, "6_months"),
+      pct_pos_3m: pctPositiveCalendar(closes, dates, "3_months"),
+      circuit_hits_1y: circuitsCalendar(closes, dates, "1_year"),
       beta: metrics.beta,
       ca_notes: caNotes.length ? caNotes : undefined,
     });

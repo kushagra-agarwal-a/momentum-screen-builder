@@ -11,11 +11,10 @@ import pandas as pd
 MOMO_SHARPE = 10.88
 MOMO_LTP = 955.35
 
-# Demerger 2025-04-24 (from NSE corp-actions API) — outside typical 252d window ending 2026-10-01
+# Demerger 2025-04-24 (from NSE corp-actions API) — before calendar 1Y start ~2025-10-01
 DEMERGER_EX = date(2025, 4, 24)
 DEMERGER_PRE_EQ = 86.97  # 2025-04-23 EQ close
 DEMERGER_POST_BE = 65.05  # 2025-04-24 BE close
-W_12M = 252
 
 
 def prev_weekday(d: date) -> date:
@@ -67,13 +66,15 @@ def daily_returns(closes: list[float]) -> list[float]:
     return [(closes[i] / closes[i - 1] - 1) for i in range(1, len(closes))]
 
 
-def sharpe_roc_over_vol(closes: list[float], window: int = W_12M, use_ltp_last: bool = True) -> dict:
-    if len(closes) < window + 1:
-        return {"error": "insufficient bars", "n": len(closes)}
-    series = closes.copy()
-    if use_ltp_last:
-        pass  # caller passes ltp in last close already
-    seg = series[-window - 1 :]
+def sharpe_roc_over_vol_calendar(
+    closes: list[float], dates: list[str], period: str = "1_year"
+) -> dict:
+    from engine.calendar_window import slice_by_calendar_period
+
+    sl = slice_by_calendar_period(dates, closes, period)
+    if not sl:
+        return {"error": "insufficient calendar slice", "n": len(closes)}
+    start_idx, end_idx, seg = sl
     rets = daily_returns(seg)
     m = sum(rets) / len(rets)
     var = sum((x - m) ** 2 for x in rets) / (len(rets) - 1)
@@ -89,6 +90,8 @@ def sharpe_roc_over_vol(closes: list[float], window: int = W_12M, use_ltp_last: 
         "sharpe_mean_daily_ann": sharpe_mean,
         "start_close": seg[0],
         "end_close": seg[-1],
+        "start_date": dates[start_idx],
+        "end_date": dates[end_idx],
         "n_rets": len(rets),
     }
 
@@ -139,38 +142,39 @@ def main() -> None:
             "pre_eq_close": DEMERGER_PRE_EQ,
             "post_be_close": DEMERGER_POST_BE,
             "post_over_pre": DEMERGER_POST_BE / DEMERGER_PRE_EQ,
-            "in_252d_window": False,
+            "in_calendar_1y_window": False,
         }
     )
-    print("(252d window starts ~2025-10-14 — demerger does not fall inside it)")
+    print("(Calendar 1Y starts ~2025-10-01 — demerger does not fall inside it)")
     print("detect from loaded bars:", jump)
 
-    closes_raw = df["close"].tolist()
+    dates = df["trade_date"].dt.strftime("%Y-%m-%d").tolist()
     closes_ltp = df["close"].tolist()
     closes_ltp[-1] = float(df["ltp"].iloc[-1])
 
-    raw = sharpe_roc_over_vol(closes_ltp)
+    raw = sharpe_roc_over_vol_calendar(closes_ltp, dates)
     print("\n=== Sharpe (raw unadjusted, ROC/vol, LTP last) ===")
     print(raw)
     print(f"Momo reference Sharpe: {MOMO_SHARPE}")
 
     if "back_adjust_multiply_pre_by" in jump:
         factor = jump["back_adjust_multiply_pre_by"]
-        adj_df = apply_back_adjust(df, ex, factor)
+        adj_df = apply_back_adjust(df, DEMERGER_EX, factor)
         closes_adj = adj_df["close"].tolist()
         closes_adj[-1] = float(adj_df["ltp"].iloc[-1])
-        adj = sharpe_roc_over_vol(closes_adj)
+        adj = sharpe_roc_over_vol_calendar(closes_adj, dates)
         print("\n=== Sharpe (single-factor back-adjust at demerger ex-date) ===")
         print(adj)
         print(f"Gap vs Momo (adjusted - Momo): {(adj.get('sharpe_roc_over_vol') or 0) - MOMO_SHARPE:.4f}")
 
     # Alternative: exclude demerger window (robustness)
-    df2 = df[pd.to_datetime(df["trade_date"]).dt.date != ex].reset_index(drop=True)
-    if len(df2) >= W_12M + 1:
+    df2 = df[pd.to_datetime(df["trade_date"]).dt.date != DEMERGER_EX].reset_index(drop=True)
+    if len(df2) >= 30:
         c2 = df2["close"].tolist()
         c2[-1] = float(df2["ltp"].iloc[-1])
+        d2 = df2["trade_date"].dt.strftime("%Y-%m-%d").tolist()
         print("\n=== Sharpe (raw, dropping ex-date bar only) ===")
-        print(sharpe_roc_over_vol(c2))
+        print(sharpe_roc_over_vol_calendar(c2, d2))
 
 
 if __name__ == "__main__":

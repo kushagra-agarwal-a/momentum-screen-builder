@@ -1,16 +1,14 @@
-const W_1M = 21;
-const W_3M = 63;
-const W_6M = 126;
-const W_9M = 189;
-const W_12M = 252;
+import {
+  calendarLookbackTradingDays,
+  calendarStartIso,
+  indexOnOrBeforeCalendarStart,
+  sliceByCalendarPeriod,
+  type CalendarPeriod,
+} from "./calendar-window";
 
-const WINDOW: Record<string, number> = {
-  "1_year": W_12M,
-  "9_months": W_9M,
-  "6_months": W_6M,
-  "3_months": W_3M,
-  "1_months": W_1M,
-};
+const W_1M = 21;
+const W_6M = 126;
+const W_12M = 252;
 
 function mean(arr: number[]) {
   return arr.reduce((a, b) => a + b, 0) / arr.length;
@@ -30,24 +28,58 @@ export function dailyReturns(closes: number[]): number[] {
   return out;
 }
 
-export function absoluteReturn(closes: number[], window: number): number | null {
-  if (closes.length < window + 1) return null;
-  const start = closes[closes.length - window - 1];
-  const end = closes[closes.length - 1];
+function absoluteReturnCalendar(
+  closes: number[],
+  dates: string[],
+  period: CalendarPeriod,
+): number | null {
+  const slice = sliceByCalendarPeriod(dates, closes, period);
+  if (!slice || slice.segment.length < 2) return null;
+  const start = slice.segment[0];
+  const end = slice.segment[slice.segment.length - 1];
   if (start <= 0) return null;
   return end / start - 1;
 }
 
-export function sharpeReturn(closes: number[], window: number): number | null {
-  if (closes.length < window + 1) return null;
-  const seg = closes.slice(-window - 1);
-  const rets = dailyReturns(seg);
+function sharpeReturnCalendar(
+  closes: number[],
+  dates: string[],
+  period: CalendarPeriod,
+): number | null {
+  const slice = sliceByCalendarPeriod(dates, closes, period);
+  if (!slice || slice.segment.length < 6) return null;
+  const rets = dailyReturns(slice.segment);
   if (rets.length < 5) return null;
   const vol = stdev(rets) * Math.sqrt(252);
   if (vol === 0) return null;
-  const roc = absoluteReturn(closes, window);
-  if (roc == null) return null;
+  const start = slice.segment[0];
+  const end = slice.segment[slice.segment.length - 1];
+  if (start <= 0) return null;
+  const roc = end / start - 1;
   return roc / vol;
+}
+
+function rsiCalendar(closes: number[], dates: string[], period: CalendarPeriod, rsiPeriod = 14): number | null {
+  const slice = sliceByCalendarPeriod(dates, closes, period);
+  if (!slice || slice.segment.length < rsiPeriod + 2) return null;
+  const segment = slice.segment;
+  const deltas = segment.slice(1).map((v, i) => v - segment[i]);
+  const gains = deltas.map((d) => (d > 0 ? d : 0));
+  const losses = deltas.map((d) => (d < 0 ? -d : 0));
+  const avgGain = mean(gains.slice(-rsiPeriod));
+  const avgLoss = mean(losses.slice(-rsiPeriod));
+  if (avgLoss === 0) return 100;
+  const rs = avgGain / avgLoss;
+  return 100 - 100 / (1 + rs);
+}
+
+function indexOnOrBefore(dates: string[], endIdx: number, targetIso: string): number {
+  let chosen = 0;
+  for (let i = 0; i <= endIdx; i++) {
+    if (dates[i] <= targetIso) chosen = i;
+    else break;
+  }
+  return chosen;
 }
 
 function averageMetric(vals: (number | null)[]): number | null {
@@ -56,25 +88,19 @@ function averageMetric(vals: (number | null)[]): number | null {
   return mean(nums);
 }
 
-export function rsi(closes: number[], window: number, period = 14): number | null {
-  if (closes.length < window) return null;
-  const segment = closes.slice(-window);
-  if (segment.length < period + 1) return null;
-  const deltas = segment.slice(1).map((v, i) => v - segment[i]);
-  const gains = deltas.map((d) => (d > 0 ? d : 0));
-  const losses = deltas.map((d) => (d < 0 ? -d : 0));
-  const avgGain = mean(gains.slice(-period));
-  const avgLoss = mean(losses.slice(-period));
-  if (avgLoss === 0) return 100;
-  const rs = avgGain / avgLoss;
-  return 100 - 100 / (1 + rs);
-}
-
-export function betaVsBench(stock: number[], bench: number[], window = W_12M): number | null {
-  const n = Math.min(stock.length, bench.length);
-  if (n < window + 1) return null;
-  const rs = dailyReturns(stock.slice(-window - 1));
-  const rb = dailyReturns(bench.slice(-window - 1));
+export function betaVsBench(
+  stock: number[],
+  stockDates: string[],
+  bench: number[],
+  period: CalendarPeriod = "1_year",
+): number | null {
+  const slice = sliceByCalendarPeriod(stockDates, stock, period);
+  if (!slice || slice.segment.length < 20) return null;
+  const n = slice.segment.length;
+  const bs = bench.slice(-n);
+  if (bs.length < n) return null;
+  const rs = dailyReturns(slice.segment);
+  const rb = dailyReturns(bs);
   const m = Math.min(rs.length, rb.length);
   if (m < 20) return null;
   const srs = rs.slice(-m);
@@ -94,12 +120,15 @@ export function computeSortMetric(
   closes: number[],
   highs: number[],
   bench: number[],
+  dates: string[],
 ): number | null {
-  const absW = (s: string) => absoluteReturn(closes, WINDOW[s]);
-  const shW = (s: string) => sharpeReturn(closes, WINDOW[s]);
-  const rsiW = (s: string) => rsi(closes, WINDOW[s]);
+  if (dates.length !== closes.length) return null;
 
-  const avgAbs: Record<string, string[]> = {
+  const absW = (p: CalendarPeriod) => absoluteReturnCalendar(closes, dates, p);
+  const shW = (p: CalendarPeriod) => sharpeReturnCalendar(closes, dates, p);
+  const rsiW = (p: CalendarPeriod) => rsiCalendar(closes, dates, p);
+
+  const avgAbs: Record<string, CalendarPeriod[]> = {
     average_absolute_return_12_9_6_3_1_months: ["1_year", "9_months", "6_months", "3_months", "1_months"],
     average_absolute_return_12_9_6_3_months: ["1_year", "9_months", "6_months", "3_months"],
     average_absolute_return_12_9_6_months: ["1_year", "9_months", "6_months"],
@@ -114,7 +143,7 @@ export function computeSortMetric(
   };
   if (key in avgAbs) return averageMetric(avgAbs[key].map(absW));
 
-  const avgSh: Record<string, string[]> = {
+  const avgSh: Record<string, CalendarPeriod[]> = {
     average_sharpe_return_12_9_6_3_1_months: ["1_year", "9_months", "6_months", "3_months", "1_months"],
     average_sharpe_return_12_9_6_3_months: ["1_year", "9_months", "6_months", "3_months"],
     average_sharpe_return_12_9_6_months: ["1_year", "9_months", "6_months"],
@@ -130,7 +159,7 @@ export function computeSortMetric(
   };
   if (key in avgSh) return averageMetric(avgSh[key].map(shW));
 
-  const avgRsi: Record<string, string[]> = {
+  const avgRsi: Record<string, CalendarPeriod[]> = {
     average_rsi_12_9_6_3_1_months: ["1_year", "9_months", "6_months", "3_months", "1_months"],
     average_rsi_12_9_6_3_months: ["1_year", "9_months", "6_months", "3_months"],
     average_rsi_12_9_6_months: ["1_year", "9_months", "6_months"],
@@ -145,7 +174,9 @@ export function computeSortMetric(
   };
   if (key in avgRsi) return averageMetric(avgRsi[key].map(rsiW));
 
-  const b = betaVsBench(closes, bench.length ? bench : closes, W_12M);
+  const b = betaVsBench(closes, dates, bench.length ? bench : closes, "1_year");
+
+  const endIdx = dates.length - 1;
 
   const map: Record<string, () => number | null> = {
     absolute_return_1_year: () => absW("1_year"),
@@ -164,19 +195,29 @@ export function computeSortMetric(
     rsi_3_months: () => rsiW("3_months"),
     rsi_1_months: () => rsiW("1_months"),
     return_12_minus_1_months: () => {
-      if (closes.length < W_12M + 1) return null;
-      const start = closes[closes.length - W_12M - 1];
-      const end = closes[closes.length - W_1M - 1];
+      const startIdx = indexOnOrBeforeCalendarStart(dates, endIdx, "1_year");
+      const endTarget = calendarStartIso(dates[endIdx], "1_months");
+      const endM = indexOnOrBefore(dates, endIdx, endTarget);
+      if (startIdx == null || startIdx >= endM) return null;
+      const start = closes[startIdx];
+      const end = closes[endM];
       return start > 0 ? end / start - 1 : null;
     },
     return_12_minus_two_months: () => {
-      if (closes.length < W_12M + 1) return null;
-      const start = closes[closes.length - W_12M - 1];
-      const end = closes[closes.length - 2 * W_1M - 1];
+      const startIdx = indexOnOrBeforeCalendarStart(dates, endIdx, "1_year");
+      const endD = parseIsoDate(dates[endIdx]);
+      endD.setUTCMonth(endD.getUTCMonth() - 2);
+      const endTarget = formatIsoDate(endD);
+      const endM = indexOnOrBefore(dates, endIdx, endTarget);
+      if (startIdx == null || startIdx >= endM) return null;
+      const start = closes[startIdx];
+      const end = closes[endM];
       return start > 0 ? end / start - 1 : null;
     },
     volatility_1_year: () => {
-      const rets = dailyReturns(closes.slice(-W_12M - 1));
+      const slice = sliceByCalendarPeriod(dates, closes, "1_year");
+      if (!slice) return null;
+      const rets = dailyReturns(slice.segment);
       return rets.length >= 5 ? stdev(rets) * Math.sqrt(252) : null;
     },
     beta: () => b,
@@ -189,8 +230,9 @@ export function computeSortMetric(
       return peak > 0 ? (closes[closes.length - 1] / peak - 1) * 100 : null;
     },
     away_from_high_1_year: () => {
-      const h = highs.slice(-W_12M);
-      const peak = Math.max(...h);
+      const slice = sliceByCalendarPeriod(dates, highs, "1_year");
+      if (!slice) return null;
+      const peak = Math.max(...slice.segment);
       return peak > 0 ? (closes[closes.length - 1] / peak - 1) * 100 : null;
     },
     absolute_divide_beta_return_1_year: () => {
@@ -202,19 +244,43 @@ export function computeSortMetric(
       return s != null && b != null && b !== 0 ? s / Math.abs(b) : null;
     },
     average_sharpe_divide_beta_return_12_9_6_3_months: () =>
-      averageMetric(["1_year", "9_months", "6_months", "3_months"].map(shW).map((sh) => (sh != null && b ? sh / Math.abs(b) : null))),
+      averageMetric(
+        (["1_year", "9_months", "6_months", "3_months"] as CalendarPeriod[])
+          .map(shW)
+          .map((sh) => (sh != null && b ? sh / Math.abs(b) : null)),
+      ),
     average_sharpe_divide_beta_return_12_6_3_months: () =>
-      averageMetric(["1_year", "6_months", "3_months"].map(shW).map((sh) => (sh != null && b ? sh / Math.abs(b) : null))),
+      averageMetric(
+        (["1_year", "6_months", "3_months"] as CalendarPeriod[])
+          .map(shW)
+          .map((sh) => (sh != null && b ? sh / Math.abs(b) : null)),
+      ),
     average_sharpe_divide_beta_return_12_6_months: () =>
-      averageMetric(["1_year", "6_months"].map(shW).map((sh) => (sh != null && b ? sh / Math.abs(b) : null))),
+      averageMetric(
+        (["1_year", "6_months"] as CalendarPeriod[])
+          .map(shW)
+          .map((sh) => (sh != null && b ? sh / Math.abs(b) : null)),
+      ),
   };
 
   return map[key]?.() ?? null;
 }
 
-export { W_12M, W_6M, W_3M, W_1M, W_9M };
+function parseIsoDate(iso: string): Date {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
+}
 
-/** Minimum daily bars needed to compute this sort key (trading days). */
+function formatIsoDate(d: Date): string {
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+export { W_12M, W_6M, W_1M, calendarLookbackTradingDays };
+
+/** Minimum trading days to fetch so calendar windows can resolve. */
 export function minTradingDaysForSortKey(key: string): number {
   if (key === "none" || key === "price_to_earnings" || key === "marketcap") return 0;
   if (key === "close" || key === "close_raw") return 1;
@@ -227,11 +293,42 @@ export function minTradingDaysForSortKey(key: string): number {
     key === "return_12_minus_two_months" ||
     key === "beta"
   ) {
-    return W_12M;
+    return calendarLookbackTradingDays("1_year");
   }
-  if (key.includes("9_months")) return W_9M;
-  if (key.includes("6_months")) return W_6M;
-  if (key.includes("3_months")) return W_3M;
-  if (key.includes("1_months")) return W_1M;
-  return W_3M;
+  if (key.includes("9_months")) return calendarLookbackTradingDays("9_months");
+  if (key.includes("6_months")) return calendarLookbackTradingDays("6_months");
+  if (key.includes("3_months")) return calendarLookbackTradingDays("3_months");
+  if (key.includes("1_months")) return calendarLookbackTradingDays("1_months");
+  return calendarLookbackTradingDays("3_months");
+}
+
+/** Filter helpers: calendar window slices. */
+export function pctPositiveCalendar(closes: number[], dates: string[], period: CalendarPeriod): number | null {
+  const slice = sliceByCalendarPeriod(dates, closes, period);
+  if (!slice) return null;
+  const rets = dailyReturns(slice.segment);
+  if (!rets.length) return null;
+  return (100 * rets.filter((r) => r > 0).length) / rets.length;
+}
+
+export function circuitsCalendar(
+  closes: number[],
+  dates: string[],
+  period: CalendarPeriod,
+): number {
+  const slice = sliceByCalendarPeriod(dates, closes, period);
+  if (!slice) return 0;
+  return dailyReturns(slice.segment).filter((r) => Math.abs(r) >= 0.19).length;
+}
+
+export function medianVolumeCalendar(
+  volumes: number[],
+  dates: string[],
+  period: CalendarPeriod,
+): number | null {
+  const slice = sliceByCalendarPeriod(dates, volumes, period);
+  if (!slice || !slice.segment.length) return null;
+  const s = [...slice.segment].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 }

@@ -9,14 +9,11 @@ import pandas as pd
 
 from engine.data_loader import all_symbols_from_latest, load_series, sync_bhavcopy
 from engine.metrics import (
-    W_12M,
     above_ma,
     circuit_hits,
     compute_sort_metric,
     median_volume,
     pct_positive_days,
-    sharpe_return,
-    volatility_annualized,
 )
 from engine.sort_options import SORT_KEYS, sort_option
 from engine.prices import closes_for_metrics, last_display_prices
@@ -169,20 +166,21 @@ def run_screen(config_dict: dict[str, Any]) -> dict[str, Any]:
     rows: list[dict[str, Any]] = []
     for sym, df in series_map.items():
         closes = closes_for_metrics(df)
+        dates = df["trade_date"].astype(str).str[:10].tolist()
         highs = df["high"].tolist() if "high" in df else None
         volumes = df["volume"].tolist() if "volume" in df else None
         ltp_disp, close_eod = last_display_prices(df)
 
         metrics: dict[str, float | None] = {}
         for key in SORT_KEYS:
-            metrics[key] = compute_sort_metric(key, closes, highs, volumes, bench_closes)
+            metrics[key] = compute_sort_metric(key, closes, highs, volumes, bench_closes, dates)
 
         row = {
             "symbol": sym,
             "close": ltp_disp,
             "close_eod": close_eod,
             "metrics": metrics,
-            "median_volume": median_volume(volumes or [], W_12M),
+            "median_volume": median_volume(volumes or [], dates, "1_year"),
             "away_from_high_1y": metrics.get("away_from_high_1_year"),
             "away_from_high_at": metrics.get("away_from_high_all_time"),
             "away_from_high_5y": metrics.get("away_from_high_all_time"),
@@ -190,10 +188,10 @@ def run_screen(config_dict: dict[str, Any]) -> dict[str, Any]:
             "above_ma_100": above_ma(closes, 100),
             "absolute_return_1y": metrics.get("absolute_return_1_year"),
             "volatility_1y": metrics.get("volatility_1_year"),
-            "pct_pos_1y": pct_positive_days(closes, W_12M),
-            "pct_pos_6m": pct_positive_days(closes, 126),
-            "pct_pos_3m": pct_positive_days(closes, 63),
-            "circuit_hits_1y": circuit_hits(closes, W_12M),
+            "pct_pos_1y": pct_positive_days(closes, dates, "1_year"),
+            "pct_pos_6m": pct_positive_days(closes, dates, "6_months"),
+            "pct_pos_3m": pct_positive_days(closes, dates, "3_months"),
+            "circuit_hits_1y": circuit_hits(closes, dates, "1_year"),
             "beta": metrics.get("beta"),
         }
         rows.append(row)
