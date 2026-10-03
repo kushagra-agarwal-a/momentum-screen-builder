@@ -1,7 +1,7 @@
 import { SORT_OPTIONS } from "@/lib/screen-config";
 import { loadPriceHistory, type Bar } from "./bhavcopy";
 import { mergeLiveLtp } from "./live-ltp";
-import { backAdjustBars, fetchCorporateActions } from "./corporate-actions";
+import { backAdjustBars, fetchCorporateActions, getNseSessionCookie } from "./corporate-actions";
 import { closesForMetrics, lastDisplayPrice } from "./prices";
 import {
   calendarLookbackTradingDays,
@@ -204,9 +204,11 @@ export async function runScreen(cfg: ScreenInput) {
     buildRow(sym, bars);
   }
 
+  let caSkipped = 0;
   if (applyCa && rows.length) {
     const caCache = new Map<string, Awaited<ReturnType<typeof fetchCorporateActions>>>();
-    const cap = process.env.VERCEL ? 120 : rows.length;
+    const cap = process.env.VERCEL ? 40 : rows.length;
+    const caDeadline = Date.now() + (process.env.VERCEL ? 18_000 : 120_000);
     const prelim = [...rows]
       .sort((a, b) => {
         const va = (a.metrics as Record<string, number | null>)[cfg.sort_by];
@@ -217,12 +219,42 @@ export async function runScreen(cfg: ScreenInput) {
         return cfg.sort_direction === "desc" ? vb - va : va - vb;
       })
       .slice(0, cap);
+
+    let nseCookie: string | undefined;
+    try {
+      nseCookie = await getNseSessionCookie();
+    } catch {
+      nseCookie = undefined;
+    }
+
+    const caConcurrency = process.env.VERCEL ? 8 : 12;
+    for (let i = 0; i < prelim.length; i += caConcurrency) {
+      if (Date.now() > caDeadline) {
+        caSkipped += prelim.length - i;
+        break;
+      }
+      const chunk = prelim.slice(i, i + caConcurrency);
+      await Promise.all(
+        chunk.map(async (row) => {
+          const sym = row.symbol as string;
+          if (!caCache.has(sym)) {
+            caCache.set(sym, await fetchCorporateActions(sym, nseCookie));
+          }
+        }),
+      );
+    }
+
     for (const row of prelim) {
+      if (Date.now() > caDeadline) {
+        caSkipped++;
+        continue;
+      }
       const sym = row.symbol as string;
       const raw = bySymbol.get(sym);
       if (!raw) continue;
-      if (!caCache.has(sym)) caCache.set(sym, await fetchCorporateActions(sym));
-      const { bars: adjusted, notes } = backAdjustBars(raw, caCache.get(sym)!);
+      const actions = caCache.get(sym);
+      if (!actions) continue;
+      const { bars: adjusted, notes } = backAdjustBars(raw, actions);
       if (!notes.length) continue;
       rows = rows.filter((r) => r.symbol !== sym);
       buildRow(sym, adjusted, notes);
@@ -284,6 +316,12 @@ export async function runScreen(cfg: ScreenInput) {
   } else if (fetchedDays > 0 && fetchedDays < minBars) {
     warning = `Only ${fetchedDays} trading days were synced; “${cfg.sort_by}” needs about ${minBars}. Rankings may be incomplete.`;
   }
+  if (caSkipped > 0) {
+    const caMsg =
+      `Corporate-action back-adjust skipped for ${caSkipped} names (server time budget). ` +
+      "Disable “Apply corporate actions” in Core for a faster run, or use local dev for a full CA pass.";
+    warning = warning ? `${warning} ${caMsg}` : caMsg;
+  }
 
   return {
     index: cfg.index,
@@ -298,6 +336,7 @@ export async function runScreen(cfg: ScreenInput) {
       vercel_mode: !!process.env.VERCEL,
       live_ltp_updated: liveLtp?.updated,
       live_ltp_as_of: liveLtp?.liveAsOf ?? undefined,
+      corporate_actions_skipped: caSkipped > 0 ? caSkipped : undefined,
     },
     warning,
     rows: out,

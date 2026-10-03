@@ -48,6 +48,7 @@ type ScreenResult = {
     lookback_requested?: number;
     live_ltp_updated?: number;
     live_ltp_as_of?: string;
+    corporate_actions_skipped?: number;
     errors?: string[];
   };
   rows?: Row[];
@@ -82,7 +83,25 @@ export function ScreenBuilder() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(cfg),
       });
-      const data = (await res.json()) as ScreenResult;
+      const raw = await res.text();
+      let data: ScreenResult;
+      try {
+        data = JSON.parse(raw) as ScreenResult;
+      } catch {
+        const snippet = raw.replace(/\s+/g, " ").trim().slice(0, 240);
+        throw new Error(
+          res.ok
+            ? `Server returned non-JSON (${res.status}). ${snippet || "Empty response."}`
+            : `Screen request failed (${res.status}). ${
+                snippet.startsWith("An error") || snippet.includes("FUNCTION_INVOCATION")
+                  ? "The server timed out or crashed—try NIFTY 500, turn off “Apply corporate actions”, or reduce limit."
+                  : snippet || res.statusText
+              }`,
+        );
+      }
+      if (!res.ok && !data.error) {
+        data.error = `Request failed (${res.status})`;
+      }
       setResult(data);
     } catch (e) {
       setResult({ error: e instanceof Error ? e.message : "Request failed" });
@@ -355,6 +374,16 @@ export function ScreenBuilder() {
                     id="beta"
                     checked={cfg.ignore_top_beta === "yes"}
                     onCheckedChange={(c) => patch({ ignore_top_beta: c ? "yes" : "no" })}
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <Label htmlFor="ca" className="leading-snug">
+                    Apply corporate actions (slower; can timeout on large universes)
+                  </Label>
+                  <Switch
+                    id="ca"
+                    checked={cfg.apply_corporate_actions}
+                    onCheckedChange={(c) => patch({ apply_corporate_actions: c })}
                   />
                 </div>
                 <div className="flex items-center justify-between">

@@ -47,14 +47,16 @@ function parseBonusFactor(subject: string): number | null {
   return b / (a + b);
 }
 
-export async function fetchCorporateActions(symbol: string): Promise<CorpAction[]> {
+export async function getNseSessionCookie(): Promise<string> {
+  const landing = await fetch("https://www.nseindia.com/", {
+    headers: { "User-Agent": UA, Accept: "text/html" },
+  });
+  return (landing.headers.getSetCookie?.() ?? []).map((c) => c.split(";")[0]).join("; ");
+}
+
+export async function fetchCorporateActions(symbol: string, cookie?: string): Promise<CorpAction[]> {
   try {
-    const landing = await fetch("https://www.nseindia.com/", {
-      headers: { "User-Agent": UA, Accept: "text/html" },
-    });
-    const cookie = (landing.headers.getSetCookie?.() ?? [])
-      .map((c) => c.split(";")[0])
-      .join("; ");
+    const session = cookie ?? (await getNseSessionCookie());
     const res = await fetch(
       `https://www.nseindia.com/api/corporates-corporateActions?index=equities&symbol=${encodeURIComponent(symbol)}`,
       {
@@ -62,7 +64,7 @@ export async function fetchCorporateActions(symbol: string): Promise<CorpAction[
           "User-Agent": UA,
           Accept: "application/json",
           Referer: "https://www.nseindia.com/",
-          Cookie: cookie,
+          Cookie: session,
         },
       },
     );

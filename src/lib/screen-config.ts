@@ -138,5 +138,6 @@ export const DEFAULT_SCREEN: ScreenRequest = {
   ignore_top_beta: "no",
   limit: 50,
   sync_data: true,
-  apply_corporate_actions: true,
+  /** Off by default on hosted runs to avoid Vercel 60s timeouts; enable for CA-adjusted ranks (e.g. STLTECH). */
+  apply_corporate_actions: false,
 };
