@@ -29,12 +29,15 @@ export async function POST(req: Request) {
         if (!pathname.startsWith("prices/")) {
           throw new Error("Invalid pathname");
         }
+        const isManifest = pathname.endsWith("manifest.json");
         return {
-          allowedContentTypes: ["application/gzip", "application/octet-stream", "application/json"],
-          maximumSizeInBytes: 120 * 1024 * 1024,
+          allowedContentTypes: isManifest
+            ? ["application/json", "text/plain"]
+            : ["application/gzip", "application/octet-stream"],
+          maximumSizeInBytes: isManifest ? 512 * 1024 : 120 * 1024 * 1024,
           addRandomSuffix: false,
           allowOverwrite: true,
-          cacheControlMaxAge: 3600,
+          cacheControlMaxAge: isManifest ? 300 : 3600,
           tokenPayload: clientPayload,
         };
       },
