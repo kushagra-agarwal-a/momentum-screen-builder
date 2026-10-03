@@ -31,7 +31,7 @@ We rank **all current Nifty Total Market CSV constituents** (~755 symbols) with 
 
 ### 4. Sharpe level on the same symbol
 
-We store **EOD `CLOSE_PRICE`** and **`LAST_PRICE` (LTP)** from bhavcopy; **metrics and ranking use LTP on every session** (fallback to close if LTP missing), with live NSE quote on the latest bar when today’s bhavcopy is not published yet. Momo may still differ on **corporate-action-adjusted** history. **Lookbacks are calendar-based** (e.g. 1Y = same calendar date one year back, start price = last session on or before that date). Formula: \(\text{ROC} / (\sigma_{\text{daily}} \sqrt{252})\) over that calendar slice.
+We store **EOD `CLOSE_PRICE`** and **`LAST_PRICE` (LTP)** from bhavcopy; **metrics and ranking use EOD close** for ROC, Sharpe, and volatility (table **Close** column still shows LTP when available for display). Live NSE quote can refresh the latest bar’s LTP for display only. Momo may still differ on **corporate-action-adjusted** history. **Lookbacks are calendar-based** (e.g. 1Y = same calendar date one year back, start price = last session on or before that date). Formula: \(\text{ROC} / (\sigma_{\text{daily}} \sqrt{252})\) over that calendar slice.
 
 **Bug fix:** bhavcopy parsing previously matched `prev_close` instead of `close_price`; that is corrected.
 

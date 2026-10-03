@@ -1,9 +1,9 @@
 import type { Bar } from "./bhavcopy";
 
-/** Price series for returns/Sharpe: LAST_PRICE (LTP) on every session, fallback to EOD close. */
+/** EOD close series for returns, Sharpe, and ROC (consistent start/end). */
 export function closesForMetrics(bars: Bar[]): number[] {
   if (!bars.length) return [];
-  return bars.map((b) => (b.ltp != null && b.ltp > 0 ? b.ltp : b.close));
+  return bars.map((b) => b.close);
 }
 
 export function lastDisplayPrice(bars: Bar[]): { ltp: number | null; close: number | null } {
