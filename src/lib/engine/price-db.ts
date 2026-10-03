@@ -19,7 +19,7 @@ export type PricesManifest = {
   download_url: string;
   manifest_url?: string;
   format: string;
-  tables: string[];
+  tables?: string[];
 };
 
 const DEFAULT_MANIFEST_URL = process.env.PRICES_MANIFEST_URL || "";
