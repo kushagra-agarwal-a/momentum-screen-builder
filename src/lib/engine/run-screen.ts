@@ -114,8 +114,8 @@ function requiredLookbackDays(cfg: ScreenInput): number {
   if (cfg.percentage_positive_days_three_months > 0) {
     need = Math.max(need, calendarLookbackTradingDays("3_months"));
   }
-  // Extra calendar slack for holidays / missing bhavcopy files
-  return Math.min(need + 15, 280);
+  // Extra slack for holidays / missing bhavcopy files (calendar 1Y ≈ 260 sessions in-window)
+  return Math.min(need + 15, 300);
 }
 
 function sortTuple(row: Record<string, unknown>, key: string, dir: "asc" | "desc"): [number, number] {
@@ -303,18 +303,23 @@ export async function runScreen(cfg: ScreenInput) {
     primary: (r.metrics as Record<string, number | null>)[cfg.sort_by],
   }));
 
-  const minBars = minTradingDaysForSortKey(cfg.sort_by) + 1;
+  const fetchDepth = minTradingDaysForSortKey(cfg.sort_by);
   const withPrimary = rows.filter((r) => {
     const v = (r.metrics as Record<string, number | null>)[cfg.sort_by];
     return v != null && !Number.isNaN(v);
   }).length;
+  const evaluatedCount = rows.length;
+  // Calendar 1Y needs ~260 in-window sessions; fetchDepth (280) is bhavcopy depth, not bar count required.
+  const fetchShortfall = fetchDepth > 0 && fetchedDays > 0 && fetchedDays < fetchDepth - 12;
   let warning: string | undefined;
-  if (minBars > 1 && withPrimary === 0) {
+  if (fetchDepth > 1 && withPrimary === 0) {
     warning =
-      `Could not compute “${cfg.sort_by}” for any stock (need ~${minBars} trading days of history; synced ${fetchedDays}). ` +
+      `Could not compute “${cfg.sort_by}” for any stock (loaded ${fetchedDays} bhavcopy days; target ~${lookback}). ` +
       "Results are not ranked by your sort factor. Try a shorter window (e.g. 3M/6M Sharpe) or run locally for full history.";
-  } else if (fetchedDays > 0 && fetchedDays < minBars) {
-    warning = `Only ${fetchedDays} trading days were synced; “${cfg.sort_by}” needs about ${minBars}. Rankings may be incomplete.`;
+  } else if (fetchShortfall && withPrimary < evaluatedCount * 0.9) {
+    warning =
+      `Only ${fetchedDays} of ~${lookback} NSE bhavcopy days returned data (holidays or failed downloads). ` +
+      `Some names may be missing “${cfg.sort_by}”.`;
   }
   if (caSkipped > 0) {
     const caMsg =
