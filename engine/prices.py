@@ -4,15 +4,18 @@ import pandas as pd
 
 
 def closes_for_metrics(df: pd.DataFrame) -> list[float]:
-    """Use LTP on the latest row when present (MomoIndia-style), else EOD close."""
+    """LAST_PRICE (LTP) every session when present, else EOD close."""
     if df.empty or "close" not in df.columns:
         return []
-    closes = df["close"].astype(float).tolist()
-    if "ltp" in df.columns:
-        last_ltp = df["ltp"].iloc[-1]
-        if pd.notna(last_ltp) and float(last_ltp) > 0:
-            closes[-1] = float(last_ltp)
-    return closes
+    out: list[float] = []
+    has_ltp = "ltp" in df.columns
+    for _, row in df.iterrows():
+        close = float(row["close"])
+        if has_ltp and pd.notna(row["ltp"]) and float(row["ltp"]) > 0:
+            out.append(float(row["ltp"]))
+        else:
+            out.append(close)
+    return out
 
 
 def last_display_prices(df: pd.DataFrame) -> tuple[float | None, float | None]:

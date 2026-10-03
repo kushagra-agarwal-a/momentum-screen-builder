@@ -1,13 +1,9 @@
 import type { Bar } from "./bhavcopy";
 
-/** EOD close series; the latest bar uses LTP when available (MomoIndia-style). */
+/** Price series for returns/Sharpe: LAST_PRICE (LTP) on every session, fallback to EOD close. */
 export function closesForMetrics(bars: Bar[]): number[] {
   if (!bars.length) return [];
-  return bars.map((b, i) => {
-    const isLast = i === bars.length - 1;
-    if (isLast && b.ltp != null && b.ltp > 0) return b.ltp;
-    return b.close;
-  });
+  return bars.map((b) => (b.ltp != null && b.ltp > 0 ? b.ltp : b.close));
 }
 
 export function lastDisplayPrice(bars: Bar[]): { ltp: number | null; close: number | null } {
