@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     gzip_size_bytes: body.gzip_size_bytes,
     download_url: body.download_url,
     format: "sqlite3",
-    tables: ["eod_raw", "eod_adjusted", "ca_cache", "build_meta"],
+    tables: ["eod_raw", "eod_adjusted", "ca_cache", "symbol_metrics", "build_meta"],
   };
 
   const manifest_url = await publishManifestToBlob(manifest);

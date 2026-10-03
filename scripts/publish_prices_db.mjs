@@ -125,7 +125,7 @@ async function main() {
     gzip_size_bytes: gzSize,
     download_url: dbBlob.url,
     format: "sqlite3",
-    tables: ["eod_raw", "eod_adjusted", "ca_cache", "build_meta"],
+    tables: ["eod_raw", "eod_adjusted", "ca_cache", "symbol_metrics", "build_meta"],
   };
 
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));

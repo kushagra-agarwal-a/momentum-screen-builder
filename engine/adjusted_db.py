@@ -70,10 +70,35 @@ def _conn() -> sqlite3.Connection:
         )
         """
     )
+    c.execute(
+        """
+        CREATE TABLE IF NOT EXISTS symbol_metrics (
+            symbol TEXT PRIMARY KEY,
+            as_of_date TEXT NOT NULL,
+            computed_at TEXT NOT NULL,
+            close REAL,
+            close_eod REAL,
+            metrics_json TEXT NOT NULL,
+            extras_json TEXT NOT NULL
+        )
+        """
+    )
     c.execute("CREATE INDEX IF NOT EXISTS idx_raw_sym ON eod_raw(symbol)")
     c.execute("CREATE INDEX IF NOT EXISTS idx_adj_sym ON eod_adjusted(symbol)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_metrics_as_of ON symbol_metrics(as_of_date)")
     c.commit()
     return c
+
+
+def latest_raw_date(conn: sqlite3.Connection | None = None) -> date | None:
+    own = conn is None
+    conn = conn or _conn()
+    row = conn.execute("SELECT MAX(trade_date) FROM eod_raw").fetchone()
+    if own:
+        conn.close()
+    if not row or not row[0]:
+        return None
+    return date.fromisoformat(row[0])
 
 
 def trading_days(end: date, count: int) -> list[date]:
@@ -116,6 +141,128 @@ def _parse_day_df(df, symbol_set: set[str]) -> list[tuple]:
         if prev is None or (prev[5] == "BE" and ser == "EQ"):
             rows_map[sym] = row
     return list(rows_map.values())
+
+
+def sync_incremental_raw(
+    symbols: list[str],
+    end: date | None = None,
+    max_calendar_days: int = 21,
+) -> dict[str, Any]:
+    """Fetch bhavcopy for trading days after the latest row in eod_raw (up to today)."""
+    end = end or date.today()
+    conn = _conn()
+    latest = latest_raw_date(conn)
+    sym_set = set(symbols)
+    dates_to_fetch: list[date] = []
+    d = end
+    scanned = 0
+    while scanned < max_calendar_days:
+        if d.weekday() < 5 and (latest is None or d > latest):
+            dates_to_fetch.append(d)
+        d -= timedelta(days=1)
+        scanned += 1
+    dates_to_fetch = sorted(set(dates_to_fetch))
+    if not dates_to_fetch and latest:
+        conn.close()
+        return {"mode": "incremental", "days_requested": 0, "latest_in_db": latest.isoformat(), "days_with_data": 0}
+
+    fetched = 0
+    errors: list[str] = []
+    t0 = time.time()
+    for i, day in enumerate(dates_to_fetch):
+        iso = day.isoformat()
+        try:
+            df = full_bhavcopy_df(iso)
+        except Exception as e:
+            errors.append(f"{iso}: {e}")
+            continue
+        parsed = _parse_day_df(df, sym_set)
+        if not parsed:
+            continue
+        conn.executemany(
+            "INSERT OR REPLACE INTO eod_raw (trade_date, symbol, close, ltp, high, volume, series) VALUES (?,?,?,?,?,?,?)",
+            [(iso, sym, close, ltp, high, vol, ser) for sym, close, ltp, high, vol, ser in parsed],
+        )
+        conn.commit()
+        fetched += 1
+    conn.execute(
+        "INSERT OR REPLACE INTO build_meta (key, value) VALUES (?, ?)",
+        ("raw_sync_at", datetime.now(UTC).isoformat()),
+    )
+    conn.commit()
+    conn.close()
+    return {
+        "mode": "incremental",
+        "latest_before": latest.isoformat() if latest else None,
+        "days_requested": len(dates_to_fetch),
+        "days_with_data": fetched,
+        "errors_sample": errors[:10],
+        "elapsed_sec": round(time.time() - t0, 1),
+    }
+
+
+def refresh_corporate_actions(
+    symbols: list[str],
+    ca_delay_sec: float = 0.12,
+    max_age_hours: float = 20,
+) -> dict[str, Any]:
+    """Re-fetch NSE CA JSON when cache is missing or older than max_age_hours."""
+    import requests
+
+    conn = _conn()
+    sess = requests.Session()
+    refreshed = 0
+    kept = 0
+    errors = 0
+    cutoff = datetime.now(UTC).timestamp() - max_age_hours * 3600
+
+    for i, sym in enumerate(symbols):
+        row = conn.execute("SELECT fetched_at FROM ca_cache WHERE symbol = ?", (sym,)).fetchone()
+        stale = True
+        if row and row[0]:
+            try:
+                ts = datetime.fromisoformat(row[0].replace("Z", "+00:00")).timestamp()
+                stale = ts < cutoff
+            except ValueError:
+                stale = True
+        if not stale:
+            kept += 1
+            continue
+        time.sleep(ca_delay_sec)
+        try:
+            actions = fetch_corporate_actions(sym, sess)
+            _save_ca_cache(conn, sym, actions)
+            refreshed += 1
+        except Exception:
+            errors += 1
+        if (i + 1) % 100 == 0:
+            conn.commit()
+
+    conn.commit()
+    conn.execute(
+        "INSERT OR REPLACE INTO build_meta (key, value) VALUES (?, ?)",
+        ("ca_refresh_at", datetime.now(UTC).isoformat()),
+    )
+    conn.commit()
+    conn.close()
+    return {"refreshed": refreshed, "kept_cached": kept, "errors": errors}
+
+
+def trim_history(years: float = 2.0, conn: sqlite3.Connection | None = None) -> dict[str, Any]:
+    own = conn is None
+    conn = conn or _conn()
+    latest = latest_raw_date(conn)
+    if not latest:
+        if own:
+            conn.close()
+        return {"trimmed": False}
+    cutoff = (latest - timedelta(days=int(years * 365))).isoformat()
+    for table in ("eod_raw", "eod_adjusted"):
+        conn.execute(f"DELETE FROM {table} WHERE trade_date < ?", (cutoff,))
+    conn.commit()
+    if own:
+        conn.close()
+    return {"trimmed": True, "cutoff_before": cutoff, "latest": latest.isoformat()}
 
 
 def sync_raw_bhavcopy(
@@ -214,7 +361,9 @@ def build_adjusted_universe(symbols: list[str], ca_delay_sec: float = 0.15) -> d
             actions = fetch_corporate_actions(sym, sess)
             _save_ca_cache(conn, sym, actions)
         else:
-            actions = [CorpAction(ex_date=a["ex_date"], subject=a["subject"], series=a.get("series", "EQ")) for a in cached]
+            actions = [
+                CorpAction(ex_date=a["ex_date"], subject=a["subject"], series=a.get("series", "EQ")) for a in cached
+            ]
 
         if not corp_actions_need_adjust(actions, last_date):
             adj_bars = bars

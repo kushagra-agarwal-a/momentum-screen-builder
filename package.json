@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "publish:prices": "node scripts/publish_prices_db.mjs",
-    "build:prices-db": "PYTHONPATH=. python3 -m engine.adjusted_db 2"
+    "build:prices-db": "PYTHONPATH=. python3 -m engine.adjusted_db 2",
+    "daily:pipeline": "PYTHONPATH=. python3 -m engine.daily_pipeline",
+    "daily:pipeline:publish": "PYTHONPATH=. python3 -m engine.daily_pipeline --publish"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

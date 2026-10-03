@@ -38,9 +38,31 @@ This writes to `data/prices.sqlite`:
 | `eod_raw` | Unadjusted EQ/BE bhavcopy for ~755 index symbols |
 | `eod_adjusted` | Same bars after bonus/split/consolidation/scheme back-adjust |
 | `ca_cache` | NSE corporate-actions JSON per symbol |
-| `build_meta` | Last sync timestamps |
+| `symbol_metrics` | Precomputed **64** Momo-style metrics + filter helpers per symbol |
+| `build_meta` | Last sync / pipeline timestamps |
 
-Re-run the command to refresh (raw days are replaced; CA cache is reused). See [docs/nse-corporate-actions-handling.md](docs/nse-corporate-actions-handling.md).
+**Daily update** (incremental bhavcopy → refresh CA → rebuild adjusted → recompute metrics):
+
+```bash
+npm run daily:pipeline              # local only
+npm run daily:pipeline:publish      # + upload to Vercel Blob (needs PRICES_PUBLISH_SECRET)
+```
+
+GitHub Actions runs the same flow on **weekdays ~18:45 IST** (`.github/workflows/daily-market-data.yml`) when `PRICES_PUBLISH_SECRET` is set in repo secrets.
+
+See [docs/nse-corporate-actions-handling.md](docs/nse-corporate-actions-handling.md).
+
+### Public metrics API (v1)
+
+When the published DB includes `symbol_metrics`:
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/v1/meta` | As-of date, symbol count, blob links |
+| `GET /api/v1/stocks?limit=50&sort=sharpe_return_1_year&direction=desc` | Paginated universe + all metrics |
+| `GET /api/v1/stocks/RELIANCE?bars=260` | One symbol + optional adjusted EOD history |
+
+Example: `https://momentum-screen-builder-app.vercel.app/api/v1/stocks/TCS`
 
 ### Publish for everyone (Vercel Blob)
 

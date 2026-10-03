@@ -1,0 +1,35 @@
+name: Daily market data
+
+on:
+  schedule:
+    # ~18:45 IST (13:15 UTC) Mon–Fri after NSE bhavcopy is available
+    - cron: "15 13 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          npm ci
+
+      - name: Daily pipeline (prices, CA, adjusted, metrics)
+        run: PYTHONPATH=. python3 -m engine.daily_pipeline
+
+      - name: Publish SQLite to Vercel Blob
+        env:
+          PRICES_PUBLISH_SECRET: ${{ secrets.PRICES_PUBLISH_SECRET }}
+        run: node scripts/publish_prices_db.mjs
