@@ -32,4 +32,5 @@ jobs:
       - name: Publish SQLite to Vercel Blob
         env:
           PRICES_PUBLISH_SECRET: ${{ secrets.PRICES_PUBLISH_SECRET }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
         run: node scripts/publish_prices_db.mjs

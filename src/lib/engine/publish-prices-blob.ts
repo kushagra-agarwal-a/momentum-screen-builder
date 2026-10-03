@@ -9,6 +9,7 @@ export async function publishPricesGzipToBlob(gzipBytes: Buffer, meta: { builtAt
   const dbBlob = await put("prices/nifty-total-market-2y.sqlite.gz", gzipBytes, {
     access: "public",
     addRandomSuffix: false,
+    allowOverwrite: true,
     contentType: "application/gzip",
     cacheControlMaxAge: 3600,
   });
@@ -23,6 +24,7 @@ export async function publishManifestToBlob(manifest: PricesManifest) {
   const manifestBlob = await put("prices/manifest.json", JSON.stringify(manifest, null, 2), {
     access: "public",
     addRandomSuffix: false,
+    allowOverwrite: true,
     contentType: "application/json",
     cacheControlMaxAge: 300,
   });

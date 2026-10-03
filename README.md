@@ -1,5 +1,7 @@
 # Momentum Screen Builder
 
+**GitHub:** [github.com/kushagra-agarwal-a/momentum-screen-builder](https://github.com/kushagra-agarwal-a/momentum-screen-builder) — daily data updates via Actions; `main` pushes deploy to Vercel when linked.
+
 Web app to **create and run NSE momentum screens** with the same **64 “Sort by” factors** as [MomoIndiaScreener](https://momoindiascreener.in/), plus MomoIndia-style filters (liquidity, % positive days, MA200, distance from highs, circuits, multi-sort, presets).
 
 ## Stack
