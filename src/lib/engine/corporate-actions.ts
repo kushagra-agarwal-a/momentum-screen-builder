@@ -47,6 +47,18 @@ function parseBonusFactor(subject: string): number | null {
   return b / (a + b);
 }
 
+/** Unadjusted bonus/split ex-dates often show as a single-day move beyond this threshold. */
+export function hasExtremePriceGap(bars: Bar[], threshold = 0.35): boolean {
+  for (let i = 1; i < bars.length; i++) {
+    const prev = bars[i - 1].close;
+    const cur = bars[i].close;
+    if (prev <= 0) continue;
+    const r = cur / prev - 1;
+    if (Math.abs(r) >= threshold) return true;
+  }
+  return false;
+}
+
 export async function getNseSessionCookie(): Promise<string> {
   const landing = await fetch("https://www.nseindia.com/", {
     headers: { "User-Agent": UA, Accept: "text/html" },

@@ -1,7 +1,12 @@
 import { SORT_OPTIONS } from "@/lib/screen-config";
 import { loadPriceHistory, type Bar } from "./bhavcopy";
 import { mergeLiveLtp } from "./live-ltp";
-import { backAdjustBars, fetchCorporateActions, getNseSessionCookie } from "./corporate-actions";
+import {
+  backAdjustBars,
+  fetchCorporateActions,
+  getNseSessionCookie,
+  hasExtremePriceGap,
+} from "./corporate-actions";
 import { closesForMetrics, lastDisplayPrice } from "./prices";
 import {
   calendarLookbackTradingDays,
@@ -197,68 +202,49 @@ export async function runScreen(cfg: ScreenInput) {
     });
   }
 
-  let rows: Record<string, unknown>[] = [];
-  for (const sym of symbols) {
-    const bars = bySymbol.get(sym);
-    if (!bars || bars.length < 30) continue;
-    buildRow(sym, bars);
-  }
-
   let caSkipped = 0;
-  if (applyCa && rows.length) {
-    const caCache = new Map<string, Awaited<ReturnType<typeof fetchCorporateActions>>>();
-    const cap = process.env.VERCEL ? 40 : rows.length;
-    const caDeadline = Date.now() + (process.env.VERCEL ? 18_000 : 120_000);
-    const prelim = [...rows]
-      .sort((a, b) => {
-        const va = (a.metrics as Record<string, number | null>)[cfg.sort_by];
-        const vb = (b.metrics as Record<string, number | null>)[cfg.sort_by];
-        if (va == null && vb == null) return 0;
-        if (va == null) return 1;
-        if (vb == null) return -1;
-        return cfg.sort_direction === "desc" ? vb - va : va - vb;
-      })
-      .slice(0, cap);
+  let caAdjusted = 0;
+  const adjustedBySymbol = new Map<string, { bars: Bar[]; notes: string[] }>();
 
+  if (applyCa) {
+    const caCandidates = symbols.filter((sym) => {
+      const bars = bySymbol.get(sym);
+      return bars && bars.length >= 30 && hasExtremePriceGap(bars);
+    });
     let nseCookie: string | undefined;
     try {
       nseCookie = await getNseSessionCookie();
     } catch {
       nseCookie = undefined;
     }
-
+    const caDeadline = Date.now() + (process.env.VERCEL ? 25_000 : 120_000);
     const caConcurrency = process.env.VERCEL ? 8 : 12;
-    for (let i = 0; i < prelim.length; i += caConcurrency) {
+    for (let i = 0; i < caCandidates.length; i += caConcurrency) {
       if (Date.now() > caDeadline) {
-        caSkipped += prelim.length - i;
+        caSkipped += caCandidates.length - i;
         break;
       }
-      const chunk = prelim.slice(i, i + caConcurrency);
       await Promise.all(
-        chunk.map(async (row) => {
-          const sym = row.symbol as string;
-          if (!caCache.has(sym)) {
-            caCache.set(sym, await fetchCorporateActions(sym, nseCookie));
+        caCandidates.slice(i, i + caConcurrency).map(async (sym) => {
+          const raw = bySymbol.get(sym);
+          if (!raw) return;
+          const actions = await fetchCorporateActions(sym, nseCookie);
+          const { bars: adj, notes } = backAdjustBars(raw, actions);
+          if (notes.length) {
+            adjustedBySymbol.set(sym, { bars: adj, notes });
+            caAdjusted++;
           }
         }),
       );
     }
+  }
 
-    for (const row of prelim) {
-      if (Date.now() > caDeadline) {
-        caSkipped++;
-        continue;
-      }
-      const sym = row.symbol as string;
-      const raw = bySymbol.get(sym);
-      if (!raw) continue;
-      const actions = caCache.get(sym);
-      if (!actions) continue;
-      const { bars: adjusted, notes } = backAdjustBars(raw, actions);
-      if (!notes.length) continue;
-      rows = rows.filter((r) => r.symbol !== sym);
-      buildRow(sym, adjusted, notes);
-    }
+  let rows: Record<string, unknown>[] = [];
+  for (const sym of symbols) {
+    const adj = adjustedBySymbol.get(sym);
+    const bars = adj?.bars ?? bySymbol.get(sym);
+    if (!bars || bars.length < 30) continue;
+    buildRow(sym, bars, adj?.notes ?? []);
   }
 
   if (cfg.ignore_top_beta === "yes") {
@@ -341,6 +327,7 @@ export async function runScreen(cfg: ScreenInput) {
       vercel_mode: !!process.env.VERCEL,
       live_ltp_updated: liveLtp?.updated,
       live_ltp_as_of: liveLtp?.liveAsOf ?? undefined,
+      corporate_actions_adjusted: caAdjusted > 0 ? caAdjusted : undefined,
       corporate_actions_skipped: caSkipped > 0 ? caSkipped : undefined,
     },
     warning,
