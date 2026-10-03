@@ -82,34 +82,30 @@ async function main() {
       headers: { Authorization: `Bearer ${publishSecret}` },
       clientPayload: tokenPayload,
     });
-    const finalizeUrl = `${publishBase.replace(/\/$/, "")}/api/admin/publish-prices/finalize`;
-    const fin = await fetch(finalizeUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${publishSecret}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        download_url: blob.url,
-        sha256,
-        built_at: builtAt,
-        size_bytes: sizeBytes,
-        gzip_size_bytes: gzSize,
-      }),
+    const manifest = {
+      version: 1,
+      universe: "is_nifty_total_market",
+      description:
+        "Nifty Total Market ~2Y EOD bhavcopy, corporate-action back-adjusted (eod_adjusted + symbol_metrics)",
+      built_at: builtAt,
+      sha256,
+      size_bytes: sizeBytes,
+      gzip_size_bytes: gzSize,
+      download_url: blob.url,
+      format: "sqlite3",
+      tables: ["eod_raw", "eod_adjusted", "ca_cache", "symbol_metrics", "build_meta"],
+    };
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+    const manifestBlob = await upload("prices/manifest.json", JSON.stringify(manifest, null, 2), {
+      access: "public",
+      handleUploadUrl,
+      multipart: false,
+      contentType: "application/json",
+      headers: { Authorization: `Bearer ${publishSecret}` },
     });
-    const finText = await fin.text();
-    let finBody = {};
-    try {
-      finBody = JSON.parse(finText);
-    } catch {
-      finBody = { raw: finText.slice(0, 500) };
-    }
-    if (!fin.ok) {
-      console.error("Finalize failed:", fin.status, finBody);
-      process.exit(1);
-    }
-    console.log(JSON.stringify(finBody, null, 2));
-    console.log("\nSet PRICES_MANIFEST_URL on Vercel to:", finBody.manifest_url);
+    manifest.manifest_url = manifestBlob.url;
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+    console.log(JSON.stringify({ ok: true, download_url: blob.url, manifest_url: manifestBlob.url }, null, 2));
     return;
   }
 
@@ -117,6 +113,7 @@ async function main() {
   const dbBlob = await put("prices/nifty-total-market-2y.sqlite.gz", readFileSync(gzPath), {
     access: "public",
     addRandomSuffix: false,
+    allowOverwrite: true,
     contentType: "application/gzip",
     cacheControlMaxAge: 3600,
   });
@@ -140,6 +137,7 @@ async function main() {
   const manifestBlob = await put("prices/manifest.json", JSON.stringify(manifest), {
     access: "public",
     addRandomSuffix: false,
+    allowOverwrite: true,
     contentType: "application/json",
     cacheControlMaxAge: 300,
   });

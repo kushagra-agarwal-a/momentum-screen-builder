@@ -30,7 +30,7 @@ export async function POST(req: Request) {
           throw new Error("Invalid pathname");
         }
         return {
-          allowedContentTypes: ["application/gzip", "application/octet-stream"],
+          allowedContentTypes: ["application/gzip", "application/octet-stream", "application/json"],
           maximumSizeInBytes: 120 * 1024 * 1024,
           addRandomSuffix: false,
           allowOverwrite: true,
