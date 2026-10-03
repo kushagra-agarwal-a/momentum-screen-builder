@@ -82,9 +82,28 @@ async function main() {
       headers: { Authorization: `Bearer ${publishSecret}` },
       clientPayload: tokenPayload,
     });
-    const manifestUrl = `${new URL(blob.url).origin}/prices/manifest.json`;
-    console.log(JSON.stringify({ ok: true, download_url: blob.url, manifest_url: manifestUrl }, null, 2));
-    console.log("\nSet PRICES_MANIFEST_URL on Vercel to:", manifestUrl);
+    const finalizeUrl = `${publishBase.replace(/\/$/, "")}/api/admin/publish-prices/finalize`;
+    const fin = await fetch(finalizeUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${publishSecret}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        download_url: blob.url,
+        sha256,
+        built_at: builtAt,
+        size_bytes: sizeBytes,
+        gzip_size_bytes: gzSize,
+      }),
+    });
+    const finBody = await fin.json().catch(() => ({}));
+    if (!fin.ok) {
+      console.error("Finalize failed:", finBody);
+      process.exit(1);
+    }
+    console.log(JSON.stringify(finBody, null, 2));
+    console.log("\nSet PRICES_MANIFEST_URL on Vercel to:", finBody.manifest_url);
     return;
   }
 
