@@ -51,11 +51,11 @@ The SQLite file is too large for git (~88MB). Publish it to **public Vercel Blob
 3. Deploy, then upload from a machine that has `data/prices.sqlite`:
 
 ```bash
-gzip -k -f data/prices.sqlite   # creates data/prices.sqlite.gz (~35MB)
-export PRICES_PUBLISH_URL="https://momentum-screen-builder-app.vercel.app/api/admin/publish-prices"
 export PRICES_PUBLISH_SECRET="<same as Vercel env>"
 node scripts/publish_prices_db.mjs
 ```
+
+The script uses **client-side multipart upload** (~35MB gzip) to Vercel Blob (avoids the 4.5MB serverless body limit).
 
 Or with a local Blob token: `BLOB_READ_WRITE_TOKEN=... node scripts/publish_prices_db.mjs`
 

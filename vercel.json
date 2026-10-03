@@ -4,8 +4,8 @@
     "src/app/api/screen/route.ts": {
       "maxDuration": 60
     },
-    "src/app/api/admin/publish-prices/route.ts": {
-      "maxDuration": 120
+    "src/app/api/admin/publish-prices/upload/route.ts": {
+      "maxDuration": 60
     }
   }
 }

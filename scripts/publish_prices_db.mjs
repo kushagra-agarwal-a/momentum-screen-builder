@@ -13,6 +13,7 @@ import { createWriteStream } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { put } from "@vercel/blob";
+import { upload } from "@vercel/blob/client";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dbPath = path.join(root, "data/prices.sqlite");
@@ -56,27 +57,30 @@ async function main() {
     /* optional */
   }
 
-  const publishUrl = process.env.PRICES_PUBLISH_URL;
+  const publishBase =
+    process.env.PRICES_PUBLISH_BASE_URL || "https://momentum-screen-builder-app.vercel.app";
   const publishSecret = process.env.PRICES_PUBLISH_SECRET;
-  if (publishUrl && publishSecret) {
-    console.log(`Uploading via ${publishUrl} …`);
-    const gz = readFileSync(gzPath);
-    const res = await fetch(publishUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${publishSecret}`,
-        "Content-Type": "application/gzip",
-        "x-prices-built-at": builtAt,
-      },
-      body: gz,
+  const handleUploadUrl = `${publishBase.replace(/\/$/, "")}/api/admin/publish-prices/upload`;
+
+  if (publishSecret && !process.env.BLOB_READ_WRITE_TOKEN) {
+    console.log(`Client upload → ${handleUploadUrl}`);
+    const tokenPayload = JSON.stringify({
+      sha256,
+      built_at: builtAt,
+      size_bytes: sizeBytes,
+      gzip_size_bytes: gzSize,
     });
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      console.error(body);
-      process.exit(1);
-    }
-    console.log(JSON.stringify(body, null, 2));
-    console.log("\nSet PRICES_MANIFEST_URL on Vercel to:", body.manifest_url);
+    const blob = await upload("prices/nifty-total-market-2y.sqlite.gz", readFileSync(gzPath), {
+      access: "public",
+      handleUploadUrl,
+      multipart: true,
+      contentType: "application/gzip",
+      headers: { Authorization: `Bearer ${publishSecret}` },
+      clientPayload: tokenPayload,
+    });
+    const manifestUrl = `${new URL(blob.url).origin}/prices/manifest.json`;
+    console.log(JSON.stringify({ ok: true, download_url: blob.url, manifest_url: manifestUrl }, null, 2));
+    console.log("\nSet PRICES_MANIFEST_URL on Vercel to:", manifestUrl);
     return;
   }
 
