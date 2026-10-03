@@ -30,8 +30,12 @@ async function gzipFile(src, dest) {
 }
 
 async function main() {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    console.error("Missing BLOB_READ_WRITE_TOKEN. Link a Blob store to the Vercel project or export the token.");
+  const canClientUpload = !!process.env.PRICES_PUBLISH_SECRET;
+  const canDirectPut = !!process.env.BLOB_READ_WRITE_TOKEN;
+  if (!canClientUpload && !canDirectPut) {
+    console.error(
+      "Set PRICES_PUBLISH_SECRET (remote upload) or BLOB_READ_WRITE_TOKEN (local put).",
+    );
     process.exit(1);
   }
   if (!statSync(dbPath, { throwIfNoEntry: false })) {
