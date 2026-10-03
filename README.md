@@ -40,7 +40,28 @@ This writes to `data/prices.sqlite`:
 | `ca_cache` | NSE corporate-actions JSON per symbol |
 | `build_meta` | Last sync timestamps |
 
-Re-run the command to refresh (raw days are replaced; CA cache is reused). The web API on Vercel still fetches live bhavcopy unless you point it at this DB locally. See [docs/nse-corporate-actions-handling.md](docs/nse-corporate-actions-handling.md).
+Re-run the command to refresh (raw days are replaced; CA cache is reused). See [docs/nse-corporate-actions-handling.md](docs/nse-corporate-actions-handling.md).
+
+### Publish for everyone (Vercel Blob)
+
+The SQLite file is too large for git (~88MB). Publish it to **public Vercel Blob** so anyone can download it and the live app can use pre-adjusted prices:
+
+1. Link a **Blob** store to the Vercel project (Storage → Blob). This adds `BLOB_READ_WRITE_TOKEN`.
+2. Set `PRICES_PUBLISH_SECRET` on the project (random string; protects the upload endpoint).
+3. Deploy, then upload from a machine that has `data/prices.sqlite`:
+
+```bash
+gzip -k -f data/prices.sqlite   # creates data/prices.sqlite.gz (~35MB)
+export PRICES_PUBLISH_URL="https://momentum-screen-builder-app.vercel.app/api/admin/publish-prices"
+export PRICES_PUBLISH_SECRET="<same as Vercel env>"
+node scripts/publish_prices_db.mjs
+```
+
+Or with a local Blob token: `BLOB_READ_WRITE_TOKEN=... node scripts/publish_prices_db.mjs`
+
+4. Set **`PRICES_MANIFEST_URL`** on Vercel to the printed `manifest_url` (public JSON with `download_url` + `sha256`).
+
+**Public API:** `GET /api/prices/manifest` — metadata and download link. Screens use the shared DB automatically when `PRICES_MANIFEST_URL` is set (`sync.price_source: shared_db` in API responses).
 
 ## Live demo (Vercel)
 

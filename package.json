@@ -6,10 +6,14 @@
     "dev": "next dev -p 43123",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "publish:prices": "node scripts/publish_prices_db.mjs",
+    "build:prices-db": "PYTHONPATH=. python3 -m engine.adjusted_db 2"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
+    "@vercel/blob": "^2.8.0",
+    "better-sqlite3": "^13.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cn": "^0.4.0",
@@ -23,6 +27,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

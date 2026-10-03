@@ -1,5 +1,6 @@
 import { SORT_OPTIONS } from "@/lib/screen-config";
 import { loadPriceHistory, type Bar } from "./bhavcopy";
+import { loadPriceHistoryFromDb, sharedDbConfigured } from "./price-db";
 import { mergeLiveLtp } from "./live-ltp";
 import {
   backAdjustBars,
@@ -144,7 +145,10 @@ export async function runScreen(cfg: ScreenInput) {
   if (!symbols.length) return { error: "Empty universe" };
 
   const seriesMode = cfg.series === "eq" ? "eq" : "all";
-  const { bySymbol, fetchedDays, asOf } = await loadPriceHistory(symbols, lookback, seriesMode);
+  const fromDb = sharedDbConfigured() ? await loadPriceHistoryFromDb(symbols, lookback, seriesMode) : null;
+  const { bySymbol, fetchedDays, asOf } = fromDb ?? (await loadPriceHistory(symbols, lookback, seriesMode));
+  const usingSharedDb = !!fromDb;
+  const sharedManifest = fromDb?.manifest;
 
   let liveLtp: { updated: number; liveAsOf: string | null } | undefined;
   const todayIst = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
@@ -166,7 +170,7 @@ export async function runScreen(cfg: ScreenInput) {
     );
   }
 
-  const applyCa = cfg.apply_corporate_actions !== false;
+  const applyCa = !usingSharedDb && cfg.apply_corporate_actions !== false;
 
   function buildRow(sym: string, bars: Bar[], caNotes: string[] = []) {
     const dates = bars.map((b) => b.date);
@@ -327,6 +331,9 @@ export async function runScreen(cfg: ScreenInput) {
       fetched_days: fetchedDays,
       lookback_requested: lookback,
       vercel_mode: !!process.env.VERCEL,
+      price_source: usingSharedDb ? "shared_db" : "live_bhavcopy",
+      shared_db_built_at: sharedManifest?.built_at,
+      shared_db_manifest: sharedManifest?.manifest_url || process.env.PRICES_MANIFEST_URL,
       live_ltp_updated: liveLtp?.updated,
       live_ltp_as_of: liveLtp?.liveAsOf ?? undefined,
       corporate_actions_adjusted: caAdjusted > 0 ? caAdjusted : undefined,
