@@ -124,3 +124,17 @@ Per-symbol NSE calls do not scale to 750 names × every screen run (~2–3 min+)
 - Screen run reads cache only.
 
 Until then, typed CA after fetch is **correct**; gap-only is **not** sufficient.
+
+## Offline DB build (implemented)
+
+```bash
+PYTHONPATH=. python3 -m engine.adjusted_db 2   # years of history (≈252 × years trading days)
+```
+
+Pipeline (`engine/adjusted_db.py` + `engine/corporate_actions.py`):
+
+1. Resolve **Nifty Total Market** symbols (`engine/universe.py`).
+2. Pull daily full bhavcopy via **aynse** → `eod_raw`.
+3. Fetch NSE CA JSON per symbol (cached in `ca_cache`) → back-adjust → `eod_adjusted`.
+
+Python loaders: `engine.data_loader.load_adjusted_series()`. Raw bhavcopy table `eod` (legacy screen sync) coexists in the same SQLite file.

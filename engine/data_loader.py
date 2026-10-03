@@ -129,6 +129,39 @@ def load_series(symbols: list[str], min_days: int = 260) -> tuple[dict[str, pd.D
     return by_sym, missing
 
 
+def load_adjusted_series(
+    symbols: list[str], min_days: int = 260
+) -> tuple[dict[str, pd.DataFrame], list[str]]:
+    """Load CA-back-adjusted EOD from eod_adjusted (built via engine.adjusted_db)."""
+    if not DB_PATH.is_file():
+        return {}, ["No prices.sqlite; run engine.adjusted_db first."]
+    conn = sqlite3.connect(DB_PATH)
+    tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
+    if "eod_adjusted" not in tables:
+        conn.close()
+        return {}, ["eod_adjusted missing; run: PYTHONPATH=. python3 -m engine.adjusted_db 2"]
+    row = conn.execute("SELECT MAX(trade_date) FROM eod_adjusted").fetchone()
+    if not row or not row[0]:
+        conn.close()
+        return {}, ["eod_adjusted is empty."]
+    max_date = datetime.strptime(row[0], "%Y-%m-%d").date()
+    start = (max_date - timedelta(days=min_days * 2)).isoformat()
+    placeholders = ",".join("?" for _ in symbols)
+    q = f"""
+        SELECT trade_date, symbol, close, ltp, high, volume
+        FROM eod_adjusted
+        WHERE symbol IN ({placeholders}) AND trade_date >= ?
+        ORDER BY symbol, trade_date
+    """
+    df = pd.read_sql_query(q, conn, params=[*symbols, start])
+    conn.close()
+    by_sym: dict[str, pd.DataFrame] = {}
+    for sym, g in df.groupby("symbol"):
+        by_sym[sym] = g.reset_index(drop=True)
+    missing = [s for s in symbols if s not in by_sym or len(by_sym[s]) < min_days // 2]
+    return by_sym, missing
+
+
 def all_symbols_from_latest() -> list[str]:
     conn = _ensure_db()
     max_date = latest_cached_date(conn)

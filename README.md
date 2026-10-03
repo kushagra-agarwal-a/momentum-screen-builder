@@ -22,6 +22,26 @@ pip install -r requirements.txt
 
 First screen run **syncs ~280 trading days** of bhavcopy into `data/prices.sqlite` (can take several minutes). Each row stores **EOD close** (`close_price`) and **LTP** (`last_price`); rankings use **LTP on the latest bar**. Later runs are incremental.
 
+### Nifty Total Market — 2Y CA-adjusted cache (optional)
+
+For offline analytics or faster local screens without per-run NSE corporate-action calls, build a **2-year** Nifty Total Market universe with **back-adjusted** prices:
+
+```bash
+pip install -r requirements.txt
+PYTHONPATH=. python3 -m engine.adjusted_db 2
+```
+
+This writes to `data/prices.sqlite`:
+
+| Table | Contents |
+|-------|----------|
+| `eod_raw` | Unadjusted EQ/BE bhavcopy for ~755 index symbols |
+| `eod_adjusted` | Same bars after bonus/split/consolidation/scheme back-adjust |
+| `ca_cache` | NSE corporate-actions JSON per symbol |
+| `build_meta` | Last sync timestamps |
+
+Re-run the command to refresh (raw days are replaced; CA cache is reused). The web API on Vercel still fetches live bhavcopy unless you point it at this DB locally. See [docs/nse-corporate-actions-handling.md](docs/nse-corporate-actions-handling.md).
+
 ## Live demo (Vercel)
 
 **Production:** [https://momentum-screen-builder-app.vercel.app](https://momentum-screen-builder-app.vercel.app)
