@@ -9,6 +9,58 @@ export type CorpAction = {
   series: string;
 };
 
+export type CorpActionType =
+  | "bonus"
+  | "split"
+  | "consolidation"
+  | "scheme_merger_demerger"
+  | "dividend"
+  | "rights"
+  | "buyback"
+  | "administrative"
+  | "other";
+
+export type BackAdjustOptions = {
+  /** Adjust cash dividends (default false — price-return screens). */
+  adjustDividends?: boolean;
+};
+
+export function classifyCorpActionSubject(subject: string): CorpActionType {
+  const s = subject.trim();
+  const lower = s.toLowerCase();
+  if (/right\s*issue|^rights\b/i.test(s)) return "rights";
+  if (/buy\s*back|buyback/i.test(lower)) return "buyback";
+  if (/merger|amalgamation|scheme of arrangement|demerger|spin[- ]?off|slump sale/i.test(lower))
+    return "scheme_merger_demerger";
+  if (/face value|sub-division|sub division|stock split|split from/i.test(lower)) return "split";
+  if (/capital reduction|consolidation|reverse split/i.test(lower)) return "consolidation";
+  if (/bonus/i.test(lower)) return "bonus";
+  if (/dividend|int\.?\s*div|interim div|final div|special div/i.test(lower)) return "dividend";
+  if (
+    /annual general meeting|extraordinary general|postal ballot|book closure|record date|meeting of equity/i.test(
+      lower,
+    )
+  )
+    return "administrative";
+  return "other";
+}
+
+/** Types that can change the EOD price series (excluding optional dividends). */
+export function isStructuralCorpAction(type: CorpActionType): boolean {
+  return (
+    type === "bonus" ||
+    type === "split" ||
+    type === "consolidation" ||
+    type === "scheme_merger_demerger" ||
+    type === "rights"
+  );
+}
+
+export function corpActionAffectsPriceHistory(type: CorpActionType, opts: BackAdjustOptions): boolean {
+  if (type === "dividend") return opts.adjustDividends === true;
+  return isStructuralCorpAction(type);
+}
+
 function parseExDate(s: string): string | null {
   const m = s.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
   if (!m) return null;
@@ -32,12 +84,15 @@ function parseExDate(s: string): string | null {
 }
 
 function parseDividendAmount(subject: string): number | null {
-  const m = subject.match(/Dividend[^0-9]*(?:Rs\.?|Re\.?)\s*([\d.]+)/i);
+  const m = subject.match(/(?:dividend|int\.?\s*div)[^0-9]*(?:rs\.?|re\.?)\s*([\d.]+)/i);
   if (m) return parseFloat(m[1]);
+  const m2 = subject.match(/(?:rs\.?|re\.?)\s*([\d.]+)\s*(?:per share)?/i);
+  if (m2 && /div/i.test(subject)) return parseFloat(m2[1]);
   return null;
 }
 
-function parseBonusFactor(subject: string): number | null {
+/** NSE "Bonus A:B" → multiply pre-ex prices by B/(A+B). */
+export function bonusBackAdjustFactor(subject: string): number | null {
   if (!/bon/i.test(subject)) return null;
   const m = subject.match(/(\d+)\s*:\s*(\d+)/i);
   if (!m) return null;
@@ -47,16 +102,58 @@ function parseBonusFactor(subject: string): number | null {
   return b / (a + b);
 }
 
-/** Unadjusted bonus/split ex-dates often show as a single-day move beyond this threshold. */
-export function hasExtremePriceGap(bars: Bar[], threshold = 0.35): boolean {
-  for (let i = 1; i < bars.length; i++) {
-    const prev = bars[i - 1].close;
-    const cur = bars[i].close;
-    if (prev <= 0) continue;
-    const r = cur / prev - 1;
-    if (Math.abs(r) >= threshold) return true;
+/** Face-value split "From Rs X … To Re/Rs Y" → Y/X. */
+export function splitBackAdjustFactor(subject: string): number | null {
+  const fromTo = subject.match(
+    /from\s*rs\.?\s*([\d.]+)[\s/-]*(?:per share)?\s*to\s*(?:re\.?|rs\.?\s*)?\s*([\d.]+)/i,
+  );
+  if (fromTo) {
+    const oldF = parseFloat(fromTo[1]);
+    const newF = parseFloat(fromTo[2]);
+    if (oldF > 0 && newF > 0) return newF / oldF;
   }
-  return false;
+  return null;
+}
+
+function ratioAtExDate(bars: Bar[], exIso: string): number | null {
+  const idx = bars.findIndex((b) => b.date === exIso);
+  if (idx <= 0) return null;
+  const pre = bars[idx - 1].close;
+  const post = bars[idx].close;
+  if (!pre || !post) return null;
+  return post / pre;
+}
+
+function resolveBackAdjustFactor(
+  act: CorpAction,
+  type: CorpActionType,
+  bars: Bar[],
+  opts: BackAdjustOptions,
+): number | null {
+  const subj = act.subject;
+  switch (type) {
+    case "bonus":
+      return bonusBackAdjustFactor(subj);
+    case "split":
+      return splitBackAdjustFactor(subj) ?? ratioAtExDate(bars, act.exDate);
+    case "consolidation":
+    case "scheme_merger_demerger":
+      return ratioAtExDate(bars, act.exDate);
+    case "dividend": {
+      if (!opts.adjustDividends) return null;
+      const div = parseDividendAmount(subj);
+      const idx = bars.findIndex((b) => b.date === act.exDate);
+      if (div == null || idx <= 0) return null;
+      const pre = bars[idx - 1].close;
+      if (pre <= div) return null;
+      return (pre - div) / pre;
+    }
+    case "rights":
+      // TODO: parse A:B @ premium and TERP; until then use ex-day ratio if present.
+      return ratioAtExDate(bars, act.exDate);
+    default:
+      return null;
+  }
 }
 
 export async function getNseSessionCookie(): Promise<string> {
@@ -87,61 +184,48 @@ export async function fetchCorporateActions(symbol: string, cookie?: string): Pr
       const ex = parseExDate(row.exDate);
       if (ex) out.push({ exDate: ex, subject: row.subject, series: row.series || "EQ" });
     }
-    return out.sort((a, b) => b.exDate.localeCompare(a.exDate));
+    return out.sort((a, b) => a.exDate.localeCompare(b.exDate));
   } catch {
     return [];
   }
 }
 
-function ratioAtExDate(bars: Bar[], exIso: string): number | null {
-  const idx = bars.findIndex((b) => b.date === exIso);
-  if (idx <= 0) return null;
-  const pre = bars[idx - 1].close;
-  const post = bars[idx].close;
-  if (!pre || !post) return null;
-  return post / pre;
+/** True if NSE CA list contains any structural event on or before lastBar (needs fetch + adjust). */
+export function corpActionsNeedBackAdjust(
+  actions: CorpAction[],
+  lastBarDate: string,
+  opts: BackAdjustOptions = {},
+): boolean {
+  return actions.some((a) => {
+    if (a.exDate > lastBarDate) return false;
+    const t = classifyCorpActionSubject(a.subject);
+    return corpActionAffectsPriceHistory(t, opts);
+  });
 }
 
-/** Back-adjust prices before each ex-date (NSE corporate-actions / PR Bc logic). */
+/** Back-adjust prices using classified NSE corporate actions (oldest ex-date first). */
 export function backAdjustBars(
   bars: Bar[],
   actions: CorpAction[],
+  opts: BackAdjustOptions = {},
 ): { bars: Bar[]; notes: string[] } {
   if (!bars.length || !actions.length) return { bars, notes: [] };
 
   const out = [...bars].sort((a, b) => a.date.localeCompare(b.date)).map((b) => ({ ...b }));
   const notes: string[] = [];
+  const sorted = [...actions].sort((a, b) => a.exDate.localeCompare(b.exDate));
 
-  for (const act of actions) {
-    const ex = act.exDate;
-    const subj = act.subject;
-    let factor: number | null = null;
+  for (const act of sorted) {
+    const type = classifyCorpActionSubject(act.subject);
+    if (!corpActionAffectsPriceHistory(type, opts)) continue;
 
-    if (/demerger|scheme of arrangement|spin[- ]?off/i.test(subj)) {
-      factor = ratioAtExDate(out, ex);
-      if (factor != null) notes.push(`Demerger ${ex}: back-adjust ×${factor.toFixed(4)}`);
-    } else {
-      const bonus = parseBonusFactor(subj);
-      if (bonus != null) {
-        factor = bonus;
-        notes.push(`Bonus ${ex}: back-adjust ×${factor.toFixed(4)}`);
-      } else if (/dividend/i.test(subj)) {
-        const div = parseDividendAmount(subj);
-        const idx = out.findIndex((b) => b.date === ex);
-        if (div != null && idx > 0) {
-          const pre = out[idx - 1].close;
-          if (pre > div) {
-            factor = (pre - div) / pre;
-            notes.push(`Dividend ${ex}: back-adjust ×${factor.toFixed(4)} (₹${div})`);
-          }
-        }
-      }
-    }
-
+    const factor = resolveBackAdjustFactor(act, type, out, opts);
     if (factor == null || factor <= 0 || !Number.isFinite(factor)) continue;
 
+    notes.push(`${type} ${act.exDate}: back-adjust ×${factor.toFixed(4)} (${act.subject.trim().slice(0, 60)})`);
+
     for (const b of out) {
-      if (b.date < ex) {
+      if (b.date < act.exDate) {
         b.close *= factor;
         b.ltp *= factor;
         b.high *= factor;
@@ -150,4 +234,15 @@ export function backAdjustBars(
   }
 
   return { bars: out, notes };
+}
+
+/** @deprecated Use corpActionsNeedBackAdjust after fetching NSE CA. */
+export function hasExtremePriceGap(bars: Bar[], threshold = 0.35): boolean {
+  for (let i = 1; i < bars.length; i++) {
+    const prev = bars[i - 1].close;
+    const cur = bars[i].close;
+    if (prev <= 0) continue;
+    if (Math.abs(cur / prev - 1) >= threshold) return true;
+  }
+  return false;
 }

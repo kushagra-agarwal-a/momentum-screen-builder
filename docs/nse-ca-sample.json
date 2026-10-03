@@ -1,0 +1,410 @@
+{
+  "sampled_symbols": 200,
+  "symbols_with_any_ca": 187,
+  "symbols_empty_or_failed": 13,
+  "total_action_rows": 2880,
+  "counts_by_classification": {
+    "dividend": 2307,
+    "split": 41,
+    "bonus": 65,
+    "administrative": 373,
+    "scheme_merger_demerger": 16,
+    "buyback": 35,
+    "other": 42,
+    "rights": 1
+  },
+  "examples_by_classification": {
+    "dividend": [
+      {
+        "symbol": "360ONE",
+        "exDate": "2026-04-27",
+        "subject": "Interim Dividend - Rs 6 Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": null,
+          "formula": "(P-div)/P on ex-date pre-close"
+        }
+      },
+      {
+        "symbol": "360ONE",
+        "exDate": "2025-10-27",
+        "subject": "Interim Dividend - Rs 6 Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": null,
+          "formula": "(P-div)/P on ex-date pre-close"
+        }
+      },
+      {
+        "symbol": "360ONE",
+        "exDate": "2025-04-29",
+        "subject": "Interim Dividend - Rs 6 Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": null,
+          "formula": "(P-div)/P on ex-date pre-close"
+        }
+      },
+      {
+        "symbol": "360ONE",
+        "exDate": "2024-08-07",
+        "subject": "Interim Dividend - Rs 2.50 Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": null,
+          "formula": "(P-div)/P on ex-date pre-close"
+        }
+      },
+      {
+        "symbol": "360ONE",
+        "exDate": "2024-05-02",
+        "subject": "Interim Dividend - Rs 3.5 Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": null,
+          "formula": "(P-div)/P on ex-date pre-close"
+        }
+      }
+    ],
+    "split": [
+      {
+        "symbol": "360ONE",
+        "exDate": "2023-03-02",
+        "subject": "Face Value Split (Sub-Division) - From Rs 2/- Per Share To Re 1/- Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": 0.5,
+          "formula": "newFace/oldFace"
+        }
+      },
+      {
+        "symbol": "APLAPOLLO",
+        "exDate": "2020-12-15",
+        "subject": " Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": 0.2,
+          "formula": "newFace/oldFace"
+        }
+      },
+      {
+        "symbol": "ACUTAAS",
+        "exDate": "2025-04-25",
+        "subject": "Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 5/- Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": 0.5,
+          "formula": "newFace/oldFace"
+        }
+      },
+      {
+        "symbol": "ADANIPOWER",
+        "exDate": "2025-09-22",
+        "subject": "Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": 0.2,
+          "formula": "newFace/oldFace"
+        }
+      },
+      {
+        "symbol": "AFFLE",
+        "exDate": "2021-10-07",
+        "subject": " Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": 0.2,
+          "formula": "newFace/oldFace"
+        }
+      }
+    ],
+    "bonus": [
+      {
+        "symbol": "360ONE",
+        "exDate": "2023-03-02",
+        "subject": "Bonus 1:1",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": 0.5,
+          "formula": "B/(A+B)"
+        }
+      },
+      {
+        "symbol": "APLAPOLLO",
+        "exDate": "2021-09-16",
+        "subject": " Bonus 1:1",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": 0.5,
+          "formula": "B/(A+B)"
+        }
+      },
+      {
+        "symbol": "AUBANK",
+        "exDate": "2022-06-09",
+        "subject": "Bonus 1:1",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": 0.5,
+          "formula": "B/(A+B)"
+        }
+      },
+      {
+        "symbol": "AARTIIND",
+        "exDate": "2021-06-22",
+        "subject": " Bonus 1:1",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": 0.5,
+          "formula": "B/(A+B)"
+        }
+      },
+      {
+        "symbol": "AARTIIND",
+        "exDate": "2019-09-27",
+        "subject": " Bonus 1:1",
+        "series": "EQ",
+        "rule": {
+          "method": "multiply_pre_ex",
+          "factor": 0.5,
+          "formula": "B/(A+B)"
+        }
+      }
+    ],
+    "administrative": [
+      {
+        "symbol": "360ONE",
+        "exDate": "2022-09-22",
+        "subject": "Annual General Meeting",
+        "series": "EQ",
+        "rule": {
+          "method": "none",
+          "note": "no price adjust"
+        }
+      },
+      {
+        "symbol": "360ONE",
+        "exDate": "2021-09-08",
+        "subject": " Annual General Meeting",
+        "series": "EQ",
+        "rule": {
+          "method": "none",
+          "note": "no price adjust"
+        }
+      },
+      {
+        "symbol": "APLAPOLLO",
+        "exDate": "2021-07-15",
+        "subject": " Annual General Meeting",
+        "series": "EQ",
+        "rule": {
+          "method": "none",
+          "note": "no price adjust"
+        }
+      },
+      {
+        "symbol": "APLAPOLLO",
+        "exDate": "2020-09-21",
+        "subject": " Annual General Meeting",
+        "series": "EQ",
+        "rule": {
+          "method": "none",
+          "note": "no price adjust"
+        }
+      },
+      {
+        "symbol": "AUBANK",
+        "exDate": "2017-09-19",
+        "subject": " Annual General Meeting",
+        "series": "EQ",
+        "rule": {
+          "method": "none",
+          "note": "no price adjust"
+        }
+      }
+    ],
+    "scheme_merger_demerger": [
+      {
+        "symbol": "ABB",
+        "exDate": "2019-12-20",
+        "subject": " Demerger",
+        "series": "EQ",
+        "rule": {
+          "method": "price_ratio_ex_date",
+          "note": "post/pre close on ex-date (may need sibling listing)"
+        }
+      },
+      {
+        "symbol": "AARTIIND",
+        "exDate": "2022-10-19",
+        "subject": "Demerger",
+        "series": "EQ",
+        "rule": {
+          "method": "price_ratio_ex_date",
+          "note": "post/pre close on ex-date (may need sibling listing)"
+        }
+      },
+      {
+        "symbol": "AARTIIND",
+        "exDate": "2019-07-03",
+        "subject": " Scheme Of Demerger",
+        "series": "EQ",
+        "rule": {
+          "method": "price_ratio_ex_date",
+          "note": "post/pre close on ex-date (may need sibling listing)"
+        }
+      },
+      {
+        "symbol": "ADANIENT",
+        "exDate": "2018-09-06",
+        "subject": " Scheme Of Arrangement",
+        "series": "EQ",
+        "rule": {
+          "method": "price_ratio_ex_date",
+          "note": "post/pre close on ex-date (may need sibling listing)"
+        }
+      },
+      {
+        "symbol": "ADANIENT",
+        "exDate": "2018-04-05",
+        "subject": " Scheme Of Arrangement",
+        "series": "EQ",
+        "rule": {
+          "method": "price_ratio_ex_date",
+          "note": "post/pre close on ex-date (may need sibling listing)"
+        }
+      }
+    ],
+    "buyback": [
+      {
+        "symbol": "AIAENG",
+        "exDate": "2024-08-20",
+        "subject": "Buy Back",
+        "series": "EQ",
+        "rule": {
+          "method": "none",
+          "note": "buyback — usually no price series back-adjust for free-float screens"
+        }
+      },
+      {
+        "symbol": "AARTIIND",
+        "exDate": "2018-01-04",
+        "subject": " Buyback",
+        "series": "EQ",
+        "rule": {
+          "method": "none",
+          "note": "buyback — usually no price series back-adjust for free-float screens"
+        }
+      },
+      {
+        "symbol": "ADANIPORTS",
+        "exDate": "2019-06-20",
+        "subject": " Buyback",
+        "series": "EQ",
+        "rule": {
+          "method": "none",
+          "note": "buyback — usually no price series back-adjust for free-float screens"
+        }
+      },
+      {
+        "symbol": "AJANTPHARM",
+        "exDate": "2024-05-30",
+        "subject": "Buy Back",
+        "series": "EQ",
+        "rule": {
+          "method": "none",
+          "note": "buyback — usually no price series back-adjust for free-float screens"
+        }
+      },
+      {
+        "symbol": "AJANTPHARM",
+        "exDate": "2023-03-24",
+        "subject": "Buy Back",
+        "series": "EQ",
+        "rule": {
+          "method": "none",
+          "note": "buyback — usually no price series back-adjust for free-float screens"
+        }
+      }
+    ],
+    "other": [
+      {
+        "symbol": "AIAENG",
+        "exDate": "2010-02-18",
+        "subject": "Int Div-Re.0.80 Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "review",
+          "note": "manual"
+        }
+      },
+      {
+        "symbol": "ACE",
+        "exDate": "2018-06-14",
+        "subject": " Meeting Of Equity Shareholders",
+        "series": "EQ",
+        "rule": {
+          "method": "review",
+          "note": "manual"
+        }
+      },
+      {
+        "symbol": "ADANIENT",
+        "exDate": "2025-11-17",
+        "subject": "Rights 3:25 @ Premium Rs 1799/-",
+        "series": "EQ",
+        "rule": {
+          "method": "review",
+          "note": "manual"
+        }
+      },
+      {
+        "symbol": "AEGISLOG",
+        "exDate": "2022-02-17",
+        "subject": "Interim Divdend - Rs 2 Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "review",
+          "note": "manual"
+        }
+      },
+      {
+        "symbol": "ASAHIINDIA",
+        "exDate": "2013-07-26",
+        "subject": "Rights 13:25 @ Premium Rs 29/- Per Share",
+        "series": "EQ",
+        "rule": {
+          "method": "review",
+          "note": "manual"
+        }
+      }
+    ],
+    "rights": [
+      {
+        "symbol": "CENTRALBK",
+        "exDate": "2011-03-17",
+        "subject": "Rights Issue - 3:5 @ Premium Rs.93/-",
+        "series": "EQ",
+        "rule": {
+          "method": "special",
+          "note": "rights — adjust by theoretical ex-rights formula, not simple ratio"
+        }
+      }
+    ]
+  },
+  "generated_at": "2026-10-03T10:26:53.812Z"
+}

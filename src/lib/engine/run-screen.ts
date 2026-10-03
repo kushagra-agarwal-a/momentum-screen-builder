@@ -3,9 +3,9 @@ import { loadPriceHistory, type Bar } from "./bhavcopy";
 import { mergeLiveLtp } from "./live-ltp";
 import {
   backAdjustBars,
+  corpActionsNeedBackAdjust,
   fetchCorporateActions,
   getNseSessionCookie,
-  hasExtremePriceGap,
 } from "./corporate-actions";
 import { closesForMetrics, lastDisplayPrice } from "./prices";
 import {
@@ -209,7 +209,7 @@ export async function runScreen(cfg: ScreenInput) {
   if (applyCa) {
     const caCandidates = symbols.filter((sym) => {
       const bars = bySymbol.get(sym);
-      return bars && bars.length >= 30 && hasExtremePriceGap(bars);
+      return bars && bars.length >= 30;
     });
     let nseCookie: string | undefined;
     try {
@@ -229,6 +229,8 @@ export async function runScreen(cfg: ScreenInput) {
           const raw = bySymbol.get(sym);
           if (!raw) return;
           const actions = await fetchCorporateActions(sym, nseCookie);
+          const lastDate = raw[raw.length - 1].date;
+          if (!corpActionsNeedBackAdjust(actions, lastDate)) return;
           const { bars: adj, notes } = backAdjustBars(raw, actions);
           if (notes.length) {
             adjustedBySymbol.set(sym, { bars: adj, notes });
