@@ -97,9 +97,15 @@ async function main() {
         gzip_size_bytes: gzSize,
       }),
     });
-    const finBody = await fin.json().catch(() => ({}));
+    const finText = await fin.text();
+    let finBody = {};
+    try {
+      finBody = JSON.parse(finText);
+    } catch {
+      finBody = { raw: finText.slice(0, 500) };
+    }
     if (!fin.ok) {
-      console.error("Finalize failed:", finBody);
+      console.error("Finalize failed:", fin.status, finBody);
       process.exit(1);
     }
     console.log(JSON.stringify(finBody, null, 2));
