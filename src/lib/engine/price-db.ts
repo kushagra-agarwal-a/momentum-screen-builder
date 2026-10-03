@@ -37,7 +37,7 @@ function cacheDir() {
 export async function fetchManifest(url = DEFAULT_MANIFEST_URL): Promise<PricesManifest | null> {
   if (!url) return null;
   const now = Date.now();
-  if (manifestCache && now - manifestCache.at < 60_000) return manifestCache.manifest;
+  if (manifestCache && now - manifestCache.at < 15_000) return manifestCache.manifest;
   try {
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) return null;
