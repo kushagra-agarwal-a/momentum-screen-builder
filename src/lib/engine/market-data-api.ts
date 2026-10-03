@@ -78,7 +78,9 @@ export async function listStocks(options: {
     database?.close();
     return null;
   }
-  const limit = Math.min(Math.max(options.limit ?? 50, 1), 500);
+  /** Nifty Total Market ≈755; cap avoids accidental multi‑MB responses. Use offset for paging. */
+  const MAX_PAGE = 800;
+  const limit = Math.min(Math.max(options.limit ?? 50, 1), MAX_PAGE);
   const offset = Math.max(options.offset ?? 0, 0);
   const sort = options.sort ?? "sharpe_return_1_year";
   const direction = options.direction ?? "desc";

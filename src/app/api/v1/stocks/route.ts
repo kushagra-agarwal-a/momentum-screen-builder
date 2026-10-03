@@ -11,8 +11,10 @@ export async function GET(req: Request) {
   const offset = Number(url.searchParams.get("offset") ?? "0");
   const sort = url.searchParams.get("sort") ?? "sharpe_return_1_year";
   const direction = (url.searchParams.get("direction") ?? "desc") as "asc" | "desc";
+  const maxPage = 800;
+  const effectiveLimit = Math.min(Math.max(limit, 1), maxPage);
 
-  const data = await listStocks({ limit, offset, sort, direction });
+  const data = await listStocks({ limit: effectiveLimit, offset, sort, direction });
   if (!data || data.total === 0) {
     return NextResponse.json(
       {
@@ -28,7 +30,8 @@ export async function GET(req: Request) {
 
   return NextResponse.json(
     {
-      limit,
+      limit: effectiveLimit,
+      max_limit: maxPage,
       offset,
       total: data.total,
       sort,
