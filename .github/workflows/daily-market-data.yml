@@ -27,6 +27,8 @@ jobs:
           npm ci
 
       - name: Daily pipeline (prices, CA, adjusted, metrics)
+        env:
+          PRICES_MANIFEST_URL: https://swz2aawt4rtld4wq.public.blob.vercel-storage.com/prices/manifest.json
         run: PYTHONPATH=. python3 -m engine.daily_pipeline
 
       - name: Publish SQLite to Vercel Blob

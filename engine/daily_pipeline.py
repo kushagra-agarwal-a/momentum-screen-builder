@@ -13,6 +13,7 @@ from engine.adjusted_db import (
     sync_incremental_raw,
     trim_history,
 )
+from engine.blob_bootstrap import ensure_seeded_db
 from engine.metrics_store import compute_universe_metrics
 from engine.universe import fetch_index_symbols
 
@@ -25,6 +26,9 @@ def run_daily_pipeline(
     refresh_ca: bool = True,
     publish: bool = False,
 ) -> dict:
+    seed = ensure_seeded_db()
+    print(f"[daily] db bootstrap: {seed}", flush=True)
+
     symbols = fetch_index_symbols(index_key)
     conn = _conn()
 

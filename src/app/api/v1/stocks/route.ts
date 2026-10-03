@@ -13,11 +13,14 @@ export async function GET(req: Request) {
   const direction = (url.searchParams.get("direction") ?? "desc") as "asc" | "desc";
 
   const data = await listStocks({ limit, offset, sort, direction });
-  if (!data) {
+  if (!data || data.total === 0) {
     return NextResponse.json(
       {
         error: "Precomputed metrics not in published DB yet.",
-        hint: "Run PYTHONPATH=. python3 -m engine.daily_pipeline --publish after nightly job.",
+        hint:
+          "The Blob database may have been overwritten by a CI run without history. " +
+          "Republish a full build (npm run build:prices-db && npm run publish:prices) or wait for the fixed daily workflow.",
+        total: data?.total ?? 0,
       },
       { status: 503 },
     );

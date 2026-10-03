@@ -29,6 +29,21 @@ async function gzipFile(src, dest) {
   await pipeline(createReadStream(src), createGzip({ level: 9 }), createWriteStream(dest));
 }
 
+async function assertDbReady(dbPath) {
+  const sqlite3 = (await import("better-sqlite3")).default;
+  const db = sqlite3(dbPath, { readonly: true });
+  const metrics = db.prepare("SELECT COUNT(*) AS n FROM symbol_metrics").get()?.n ?? 0;
+  const adj = db.prepare("SELECT COUNT(*) AS n FROM eod_adjusted").get()?.n ?? 0;
+  db.close();
+  if (metrics < 400 || adj < 100000) {
+    console.error(
+      `Refusing to publish: symbol_metrics=${metrics}, eod_adjusted_rows=${adj}. ` +
+        "Run a full build or seed from Blob before publishing.",
+    );
+    process.exit(1);
+  }
+}
+
 async function main() {
   const canClientUpload = !!process.env.PRICES_PUBLISH_SECRET;
   const canDirectPut = !!process.env.BLOB_READ_WRITE_TOKEN;
@@ -42,6 +57,7 @@ async function main() {
     console.error(`Missing ${dbPath}. Run: PYTHONPATH=. python3 -m engine.adjusted_db 2`);
     process.exit(1);
   }
+  await assertDbReady(dbPath);
 
   const gzPath = `${dbPath}.gz`;
   console.log("Compressing SQLite…");
