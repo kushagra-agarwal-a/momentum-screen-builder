@@ -41,8 +41,12 @@ export async function POST(req: Request) {
     tables: ["eod_raw", "eod_adjusted", "ca_cache", "symbol_metrics", "build_meta"],
   };
 
-  const manifest_url = await publishManifestToBlob(manifest);
-  manifest.manifest_url = manifest_url;
-
-  return NextResponse.json({ ok: true, manifest_url, manifest });
+  try {
+    const manifest_url = await publishManifestToBlob(manifest);
+    manifest.manifest_url = manifest_url;
+    return NextResponse.json({ ok: true, manifest_url, manifest });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Manifest publish failed";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
